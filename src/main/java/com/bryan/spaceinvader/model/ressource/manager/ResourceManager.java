@@ -1,0 +1,66 @@
+package com.bryan.spaceinvader.model.ressource.manager;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.image.Image;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+public class ResourceManager {
+
+    private static final Logger logger = LogManager.getLogger(ResourceManager.class);
+
+    private static final String BASE_PATH = "/com/bryan/spaceinvader/";
+
+    // Méthode générique pour charger une ressource avec un chemin basé sur son type
+
+    /**
+     * Generic méthod to load a resource based on the resourceType.
+     * <br> <br>
+     * Can handle the following type :
+     * <ul>
+     *     <li>{@link Image} for images</li>
+     *     <li>{@link InputStream} for wav file (audio)</li>
+     *     <li>{@link FXMLLoader} for fxml file (scene)</li>
+     * </ul>
+     * <p>
+     * If the file isn't found, it might load nothing.
+     *
+     * @param fileName     The name of the file INCLUDING the extension
+     * @param resourceType see {@link ResourceType}
+     * @return Return the loaded resource as a T type.
+     */
+    public static <T> T loadResource(String fileName, Class<T> type, ResourceType resourceType) {
+        String fullPath = BASE_PATH + resourceType.getPathPrefix() + fileName;
+
+        if (logger.isTraceEnabled())
+            logger.trace("Loading resource : {} as {}", fullPath, resourceType.name());
+
+        T object;
+
+        if (type.equals(Image.class)) {
+            object = type.cast(new Image(ResourceManager.class.getResourceAsStream(fullPath)));
+        } else if (type.equals(InputStream.class)) {
+            object = type.cast(ResourceManager.class.getResourceAsStream(fullPath));
+        } else if (type.equals(FXMLLoader.class)) {
+            object = type.cast(new FXMLLoader(ResourceManager.class.getResource(fullPath)));
+        } else if (type.equals(Parent.class)) {
+            try {
+                object = type.cast(new FXMLLoader(ResourceManager.class.getResource(fullPath)).load());
+            } catch (IOException e) {
+                logger.error("File {} not found !", fullPath, e);
+                throw new AssertionError("File " + fullPath + " not found !");
+            }
+        } else {
+            throw new IllegalArgumentException("Unsupported resource type: " + type.getName());
+        }
+
+        if (logger.isTraceEnabled())
+            logger.trace("Successfully load resource : {} as {}", fullPath, resourceType.name());
+
+        return object;
+    }
+}

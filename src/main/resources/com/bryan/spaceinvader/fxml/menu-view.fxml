@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.bryan.spaceinvader.controller.MenuController"
+      alignment="CENTER" prefHeight="330.0" prefWidth="543.0">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+    <Button onAction="#onPlayButtonClick" text="JOUER"/>
+    <Button onAction="#onSettingsButtonClick" text="OPTION"/>
+    <Button onAction="#onQuitButtonClick" text="QUITTER"/>
+</VBox>
