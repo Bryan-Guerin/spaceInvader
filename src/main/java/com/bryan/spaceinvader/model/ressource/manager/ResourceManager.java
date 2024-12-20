@@ -15,8 +15,6 @@ public class ResourceManager {
 
     private static final String BASE_PATH = "/com/bryan/spaceinvader/";
 
-    // Méthode générique pour charger une ressource avec un chemin basé sur son type
-
     /**
      * Generic méthod to load a resource based on the resourceType.
      * <br> <br>
@@ -42,7 +40,12 @@ public class ResourceManager {
         T object;
 
         if (type.equals(Image.class)) {
-            object = type.cast(new Image(ResourceManager.class.getResourceAsStream(fullPath)));
+            try {
+                object = type.cast(new Image(ResourceManager.class.getResourceAsStream(fullPath)));
+            } catch (NullPointerException e) {
+                logger.error("File {} not found !", fullPath, e);
+                throw new AssertionError("File " + fullPath + " not found !");
+            }
         } else if (type.equals(InputStream.class)) {
             object = type.cast(ResourceManager.class.getResourceAsStream(fullPath));
         } else if (type.equals(FXMLLoader.class)) {
@@ -50,7 +53,7 @@ public class ResourceManager {
         } else if (type.equals(Parent.class)) {
             try {
                 object = type.cast(new FXMLLoader(ResourceManager.class.getResource(fullPath)).load());
-            } catch (IOException e) {
+            } catch (IOException | NullPointerException e) {
                 logger.error("File {} not found !", fullPath, e);
                 throw new AssertionError("File " + fullPath + " not found !");
             }
