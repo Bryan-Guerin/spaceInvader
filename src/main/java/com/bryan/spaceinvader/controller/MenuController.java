@@ -1,11 +1,7 @@
 package com.bryan.spaceinvader.controller;
 
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import lombok.NoArgsConstructor;
-
-import java.net.URL;
-import java.util.ResourceBundle;
 
 @NoArgsConstructor
 public class MenuController extends BasicController {
