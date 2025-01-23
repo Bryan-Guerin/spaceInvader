@@ -6,13 +6,13 @@
                    https://logging.apache.org/xml/ns/log4j-config-2.xsd">
     <Appenders>
         <Console name="CONSOLE">
-            <PatternLayout pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z' [%t] %p %logger{1.} - %m%n"/>
+            <PatternLayout pattern="%d{ISO8601} [%t] %p %logger{1.} - %m%n"/>
         </Console>
         <File name="MAIN" fileName="logs/main.log">
-            <PatternLayout pattern="%d [%t] %p %M - %m%n"/>
+            <PatternLayout pattern="%d{ISO8601} [%t] %p %logger{1.} - %m%n"/>
         </File>
         <File name="DEBUG_LOG" fileName="logs/debug.log">
-            <PatternLayout pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z' [%t] %p %logger{1.} - %m%n"/>
+            <PatternLayout pattern="%d{UNIX_MILLIS} [%t] %p %logger{1.} - %m%n"/>
         </File>
     </Appenders>
     <Loggers>

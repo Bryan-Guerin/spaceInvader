@@ -1,14 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.scene.canvas.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.bryan.spaceinvader.controller.GameController"
-            prefHeight="400.0" prefWidth="600.0">
+<StackPane fx:id="root" style="-fx-text-fill: white;"
+           xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.bryan.spaceinvader.controller.GameController">
 
-</AnchorPane>
+    <BorderPane fx:id="gamePane" style="-fx-background-color: black;">
+
+        <!-- Zone Gauche : Score -->
+        <left>
+            <VBox fx:id="scorePane" style="-fx-border-color: white; -fx-border-width: 0 2 0 0;" alignment="CENTER">
+                <Label fx:id="scoreLabel" text="Score : 0" style="-fx-font-size: 24;" textFill="WHITE" />
+            </VBox>
+        </left>
+
+        <!-- Zone Centre : Canvas du Jeu -->
+        <center>
+            <Canvas fx:id="canvas" />
+        </center>
+
+        <!-- Zone Droite : Progression (labels + barre verticale) -->
+        <right>
+            <VBox fx:id="progressPane" style="-fx-border-color: white; -fx-border-width: 0 0 0 2;" alignment="TOP_CENTER">
+
+                <!-- Zone haute : Points de vie et niveau -->
+                <Label fx:id="rightLifeLabel" style="-fx-font-size: 18;" text="Points de vie : 3" textFill="WHITE"/>
+                <Rectangle fx:id="progressSeparator" width="200" height="2" fill="white" />
+                <Label fx:id="currentLevelLabel" style="-fx-font-size: 18;" text="Niveau : 1" textFill="WHITE"/>
+
+                <!-- Séparateur (espace entre la partie haute et la barre) -->
+                <Region fx:id="spacingRegion" prefHeight="20" />
+
+                <!-- Zone centrale : Barre de progression verticale -->
+                <ProgressBar fx:id="progressBar" style="-fx-accent: green;" prefHeight="300.0" maxWidth="30.0"/>
+
+                <!-- Zone basse : Pourcentage (facultatif) -->
+                <Label fx:id="progressPercentageLabel" text="0%" style="-fx-font-size: 14;" textFill="WHITE" />
+            </VBox>
+        </right>
+
+    </BorderPane>
+</StackPane>

@@ -41,3 +41,4 @@ build/
 
 ### Custom ###
 *.log
+cfg/

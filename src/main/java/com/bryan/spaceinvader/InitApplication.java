@@ -4,6 +4,7 @@ import com.bryan.spaceinvader.controller.BasicController;
 import com.bryan.spaceinvader.model.ressource.manager.ResourceManager;
 import com.bryan.spaceinvader.model.ressource.manager.ResourceType;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -23,6 +24,7 @@ public class InitApplication extends Application {
         stage.setScene(scene);
         stage.show();
         BasicController.setStage(stage);
+        Platform.setImplicitExit(false);
         logger.info("Application started");
     }
 
