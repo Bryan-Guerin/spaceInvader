@@ -14,7 +14,6 @@ public abstract class BasicController {
     private static final Logger logger = LogManager.getLogger(BasicController.class);
 
     public static Stage stage;
-    public static Settings settings;
 
     protected void changeCurrentScene(Stage stage, String sceneName, boolean switchFullScreen) {
         Scene scene = new Scene(ResourceManager.loadResource(sceneName, Parent.class, ResourceType.FXML));

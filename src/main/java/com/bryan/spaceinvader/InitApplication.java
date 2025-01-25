@@ -24,7 +24,6 @@ public class InitApplication extends Application {
         stage.setScene(scene);
         stage.show();
         BasicController.setStage(stage);
-        Platform.setImplicitExit(false);
         logger.info("Application started");
     }
 

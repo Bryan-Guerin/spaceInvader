@@ -13,13 +13,13 @@ module com.bryan.spaceinvader {
     requires static lombok;
     requires com.fasterxml.jackson.databind;
 
-    opens com.bryan.spaceinvader to javafx.fxml;
     exports com.bryan.spaceinvader;
     exports com.bryan.spaceinvader.controller;
-    opens com.bryan.spaceinvader.controller to javafx.fxml;
-    exports com.bryan.spaceinvader.model.ressource.manager;
-    opens com.bryan.spaceinvader.model.ressource.manager to javafx.fxml;
-
     exports com.bryan.spaceinvader.model;
-    opens com.bryan.spaceinvader.model to com.fasterxml.jackson.databind;
+    exports com.bryan.spaceinvader.model.ressource.manager;
+
+    opens com.bryan.spaceinvader to javafx.fxml;
+    opens com.bryan.spaceinvader.controller to javafx.fxml;
+    opens com.bryan.spaceinvader.model to javafx.fxml, com.fasterxml.jackson.databind;
+    opens com.bryan.spaceinvader.model.ressource.manager to javafx.fxml, com.fasterxml.jackson.databind;
 }
