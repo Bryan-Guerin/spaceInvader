@@ -1,6 +1,5 @@
 package com.bryan.spaceinvader.controller;
 
-import com.bryan.spaceinvader.model.Settings;
 import com.bryan.spaceinvader.model.ressource.manager.ResourceManager;
 import com.bryan.spaceinvader.model.ressource.manager.ResourceType;
 import javafx.scene.Parent;

@@ -13,7 +13,7 @@
 
         <!-- Zone Gauche : Score -->
         <left>
-            <VBox fx:id="scorePane" style="-fx-border-color: white; -fx-border-width: 0 2 0 0;" alignment="CENTER">
+            <VBox fx:id="scorePane" style="-fx-border-color: white; -fx-border-width: 0 2 0 0;" prefWidth="384" alignment="CENTER">
                 <Label fx:id="scoreLabel" text="Score : 0" style="-fx-font-size: 24;" textFill="WHITE" />
             </VBox>
         </left>
@@ -25,7 +25,7 @@
 
         <!-- Zone Droite : Progression (labels + barre verticale) -->
         <right>
-            <VBox fx:id="progressPane" style="-fx-border-color: white; -fx-border-width: 0 0 0 2;" alignment="TOP_CENTER">
+            <VBox fx:id="progressPane" style="-fx-border-color: white; -fx-border-width: 0 0 0 2;" prefWidth="384" alignment="TOP_CENTER">
 
                 <!-- Zone haute : Points de vie et niveau -->
                 <Label fx:id="rightLifeLabel" style="-fx-font-size: 18;" text="Points de vie : 3" textFill="WHITE"/>
@@ -36,7 +36,7 @@
                 <Region fx:id="spacingRegion" prefHeight="20" />
 
                 <!-- Zone centrale : Barre de progression verticale -->
-                <ProgressBar fx:id="progressBar" style="-fx-accent: green;" prefHeight="300.0" maxWidth="30.0"/>
+                <ProgressBar fx:id="progressBar" style="-fx-accent: green;" prefHeight="800" maxHeight="900" maxWidth="30.0"/>
 
                 <!-- Zone basse : Pourcentage (facultatif) -->
                 <Label fx:id="progressPercentageLabel" text="0%" style="-fx-font-size: 14;" textFill="WHITE" />

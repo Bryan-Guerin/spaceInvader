@@ -20,6 +20,8 @@ public class Settings implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
+    private static final double DEFAULT_VOLUME = 1.0;
+    private static final double DEFAULT_FREQUENCY = 60.0;
 
     private static final Logger logger = LogManager.getLogger(Settings.class);
     private static final Path filePath = Paths.get("cfg/settings.json").toAbsolutePath();
@@ -36,7 +38,11 @@ public class Settings implements Serializable {
     @JsonProperty(value = "allKeyBindings")
     private final HashMap<GameAction, KeyBind> keyBindings = new HashMap<>();
 
-    private Settings() {}
+    private double volume;
+    private double frequency;
+
+    private Settings() {
+    }
 
     // Chargement des réglages depuis un fichier JSON
     private static Settings loadSettings() {
@@ -53,7 +59,7 @@ public class Settings implements Serializable {
                 logger.error("Error loading settings from file: {}", filePath, e);
             }
         } else {
-            settings.getDefaultKeyBinds();
+            settings.getDefault();
             settings.save();
         }
         return settings;
@@ -98,6 +104,12 @@ public class Settings implements Serializable {
                 .anyMatch(keyBind -> keyBind.getKeyCode().equals(keyCode));
     }
 
+    private void getDefault() {
+        getDefaultKeyBinds();
+        volume = DEFAULT_VOLUME;
+        frequency = DEFAULT_FREQUENCY;
+    }
+
     private void getDefaultKeyBinds() {
         keyBindings.put(GameAction.MOVE_LEFT, new KeyBind(KeyCode.Q));
         keyBindings.put(GameAction.MOVE_RIGHT, new KeyBind(KeyCode.D));
@@ -110,9 +122,26 @@ public class Settings implements Serializable {
         SHOOT
     }
 
+    // Permet d'indiquer au process de serialisation comment instancier la classe
     @Serial
     private Object readResolve() {
         return getInstance();
+    }
+
+    public double getVolume() {
+        return volume;
+    }
+
+    public void setVolume(double volume) {
+        this.volume = volume;
+    }
+
+    public double getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(double frequency) {
+        this.frequency = frequency;
     }
 
 }

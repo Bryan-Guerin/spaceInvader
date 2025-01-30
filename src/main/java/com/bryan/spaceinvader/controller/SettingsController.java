@@ -4,9 +4,10 @@ import com.bryan.spaceinvader.model.Settings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseDragEvent;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,22 +23,28 @@ public class SettingsController extends BasicController implements Initializable
     public Settings settings = Settings.getInstance();
 
     @FXML
+    public Slider volumeSlider;
+    @FXML
+    public Slider frequencySlider;
+    @FXML
     private Label moveLeftLabel;
     @FXML
     private Label moveRightLabel;
     @FXML
     private Label shootLabel;
 
-    @FXML
-    public Button settingsShootButton;
-    @FXML
-    public Button settingsMoveLeftButton;
-    @FXML
-    public Button settingsMoveRightButton;
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         updateLabels();
+
+        volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            settings.setVolume(newValue.doubleValue());
+        });
+
+        frequencySlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            settings.setFrequency(newValue.doubleValue());
+        });
+
         logger.info("Settings controller initialized");
     }
 
@@ -45,6 +52,9 @@ public class SettingsController extends BasicController implements Initializable
         moveLeftLabel.setText(settings.getKeyBinding(Settings.GameAction.MOVE_LEFT).getKeyCode().toString());
         moveRightLabel.setText(settings.getKeyBinding(Settings.GameAction.MOVE_RIGHT).getKeyCode().toString());
         shootLabel.setText(settings.getKeyBinding(Settings.GameAction.SHOOT).getKeyCode().toString());
+
+        volumeSlider.setValue(settings.getVolume());
+        frequencySlider.setValue(settings.getFrequency());
     }
 
     private void listenForKey(Settings.GameAction action, Label label) {
@@ -81,4 +91,14 @@ public class SettingsController extends BasicController implements Initializable
         listenForKey(Settings.GameAction.SHOOT, shootLabel);
     }
 
+    @FXML
+    public void onVolumeSliderDragExit(MouseDragEvent mouseDragEvent) {
+        settings.setVolume(volumeSlider.getValue());
+        mouseDragEvent.consume();
+    }
+
+    public void onFrequencySliderDragExit(MouseDragEvent mouseDragEvent) {
+        settings.setFrequency(frequencySlider.getValue());
+        mouseDragEvent.consume();
+    }
 }
