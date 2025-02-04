@@ -40,6 +40,10 @@ public class Settings implements Serializable {
 
     private double volume;
     private double frequency;
+    private Difficulty difficulty;
+
+    @JsonIgnore
+    private transient double period;
 
     private Settings() {
     }
@@ -78,7 +82,7 @@ public class Settings implements Serializable {
             file.getParentFile().mkdirs(); // Crée les dossiers si nécessaire
             mapper.writeValue(file, this);
         } catch (Exception e) {
-            logger.error("Error while saving settings: " + filePath, e);
+            logger.error("Error while saving settings: {}", filePath, e);
         }
 
         if (logger.isInfoEnabled())
@@ -93,6 +97,14 @@ public class Settings implements Serializable {
 
     public KeyBind getKeyBinding(GameAction action) {
         return keyBindings.get(action);
+    }
+
+    public GameAction getGameActionByKeyCode(KeyCode keyCode) {
+        return keyBindings.entrySet().stream()
+                .filter(entry -> entry.getValue().getKeyCode().equals(keyCode))
+                .findFirst()
+                .map(Map.Entry::getKey)
+                .orElse(null);
     }
 
     public Map<GameAction, KeyBind> getAllKeyBindings() {
@@ -122,6 +134,12 @@ public class Settings implements Serializable {
         SHOOT
     }
 
+    public enum Difficulty {
+        EASY,
+        NORMAL,
+        HARD
+    }
+
     // Permet d'indiquer au process de serialisation comment instancier la classe
     @Serial
     private Object readResolve() {
@@ -142,6 +160,20 @@ public class Settings implements Serializable {
 
     public void setFrequency(double frequency) {
         this.frequency = frequency;
+        this.period = 1000.0 / frequency;
+    }
+
+    public double getPeriod() {
+        this.period = 1000.0 / frequency;
+        return period;
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(Difficulty difficulty) {
+        this.difficulty = difficulty;
     }
 
 }

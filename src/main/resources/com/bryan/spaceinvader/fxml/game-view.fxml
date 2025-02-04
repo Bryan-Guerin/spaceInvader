@@ -7,20 +7,20 @@
 
 <StackPane fx:id="root" style="-fx-text-fill: white;"
            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="com.bryan.spaceinvader.controller.GameController">
+           fx:controller="com.bryan.spaceinvader.controller.GameController" prefHeight="1080" prefWidth="1920">
 
     <BorderPane fx:id="gamePane" style="-fx-background-color: black;">
 
         <!-- Zone Gauche : Score -->
         <left>
-            <VBox fx:id="scorePane" style="-fx-border-color: white; -fx-border-width: 0 2 0 0;" prefWidth="384" alignment="CENTER">
+            <VBox fx:id="scorePane" style="-fx-border-color: white; -fx-border-width: 0 2 0 0;" prefWidth="250" alignment="CENTER">
                 <Label fx:id="scoreLabel" text="Score : 0" style="-fx-font-size: 24;" textFill="WHITE" />
             </VBox>
         </left>
 
         <!-- Zone Centre : Canvas du Jeu -->
         <center>
-            <Canvas fx:id="canvas" />
+            <Canvas fx:id="canvas"/>
         </center>
 
         <!-- Zone Droite : Progression (labels + barre verticale) -->

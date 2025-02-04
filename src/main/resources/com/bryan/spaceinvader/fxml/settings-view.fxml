@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <BorderPane prefHeight="400.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bryan.spaceinvader.controller.SettingsController">
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bryan.spaceinvader.controller.SettingsController" style="-fx-background-color: black;">
     <center>
         <VBox alignment="CENTER" prefHeight="400" prefWidth="550.0" BorderPane.alignment="CENTER">
             <Label text="Settings" style="-fx-font-size: 20px;"/>
@@ -30,6 +30,10 @@
             <HBox alignment="CENTER" spacing="10">
                 <Label text="Frequency:"/>
                 <Slider fx:id="frequencySlider" min="30" max="120" cache="true" blockIncrement="5" majorTickUnit="30" snapToTicks="true" showTickLabels="true" showTickMarks="true"/>
+            </HBox>
+            <HBox alignment="CENTER" spacing="10">
+                <Label text="Difficulty:"/>
+                <ComboBox fx:id="difficultyComboBox" promptText="Select a difficulty" onAction="#onChangeDifficulty"/>
             </HBox>
 
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">

@@ -4,18 +4,16 @@ import com.bryan.spaceinvader.model.Settings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseDragEvent;
-import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-@NoArgsConstructor
 public class SettingsController extends BasicController implements Initializable {
 
     private final static Logger logger = LogManager.getLogger(SettingsController.class);
@@ -27,6 +25,8 @@ public class SettingsController extends BasicController implements Initializable
     @FXML
     public Slider frequencySlider;
     @FXML
+    public ComboBox<Settings.Difficulty> difficultyComboBox;
+    @FXML
     private Label moveLeftLabel;
     @FXML
     private Label moveRightLabel;
@@ -36,6 +36,8 @@ public class SettingsController extends BasicController implements Initializable
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         updateLabels();
+
+        difficultyComboBox.getItems().setAll(Settings.Difficulty.values());
 
         volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             settings.setVolume(newValue.doubleValue());
@@ -55,6 +57,7 @@ public class SettingsController extends BasicController implements Initializable
 
         volumeSlider.setValue(settings.getVolume());
         frequencySlider.setValue(settings.getFrequency());
+        difficultyComboBox.setValue(settings.getDifficulty());
     }
 
     private void listenForKey(Settings.GameAction action, Label label) {
@@ -92,13 +95,7 @@ public class SettingsController extends BasicController implements Initializable
     }
 
     @FXML
-    public void onVolumeSliderDragExit(MouseDragEvent mouseDragEvent) {
-        settings.setVolume(volumeSlider.getValue());
-        mouseDragEvent.consume();
-    }
-
-    public void onFrequencySliderDragExit(MouseDragEvent mouseDragEvent) {
-        settings.setFrequency(frequencySlider.getValue());
-        mouseDragEvent.consume();
+    public void onChangeDifficulty() {
+        this.settings.setDifficulty(Settings.Difficulty.valueOf(difficultyComboBox.getValue().toString().toUpperCase()));
     }
 }
