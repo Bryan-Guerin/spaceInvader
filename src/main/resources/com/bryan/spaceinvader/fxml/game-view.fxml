@@ -28,18 +28,18 @@
             <VBox fx:id="progressPane" style="-fx-border-color: white; -fx-border-width: 0 0 0 2;" prefWidth="384" alignment="TOP_CENTER">
 
                 <!-- Zone haute : Points de vie et niveau -->
-                <Label fx:id="rightLifeLabel" style="-fx-font-size: 18;" text="Points de vie : 3" textFill="WHITE"/>
-                <Rectangle fx:id="progressSeparator" width="200" height="2" fill="white" />
-                <Label fx:id="currentLevelLabel" style="-fx-font-size: 18;" text="Niveau : 1" textFill="WHITE"/>
+                <Label fx:id="rightLifeLabel" style="-fx-font-size: 18;" text="Points de vie : X" textFill="WHITE"/>
+                <Rectangle width="200" height="2" fill="white" />
+                <Label fx:id="currentLevelLabel" style="-fx-font-size: 18;" text="Niveau : X" textFill="WHITE"/>
 
                 <!-- Séparateur (espace entre la partie haute et la barre) -->
-                <Region fx:id="spacingRegion" prefHeight="20" />
+                <Region prefHeight="20" />
 
                 <!-- Zone centrale : Barre de progression verticale -->
-                <ProgressBar fx:id="progressBar" style="-fx-accent: green;" prefHeight="800" maxHeight="900" maxWidth="30.0"/>
+                <ProgressBar fx:id="progressBar" style="-fx-accent: green;" prefHeight="30" maxWidth="800" rotate="90"/>
 
                 <!-- Zone basse : Pourcentage (facultatif) -->
-                <Label fx:id="progressPercentageLabel" text="0%" style="-fx-font-size: 14;" textFill="WHITE" />
+                <Label fx:id="progressPercentageLabel" text="X %" style="-fx-font-size: 14;" textFill="WHITE" />
             </VBox>
         </right>
 

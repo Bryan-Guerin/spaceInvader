@@ -10,6 +10,8 @@ public class Player {
     private static int ATTACK_SPEED = 3; // bullets per second
     private static final String[] vesselTextures = {"V0.png", "V1.png", "V2.png"};
     private int currentVessel = 0;
+    private int bulletDamage = 1;
+    private int health = 3;
 
     public Position position;
 
@@ -18,7 +20,7 @@ public class Player {
     }
 
     public Bullet shoot() {
-        return new Bullet(position, new Vector(0, BULLET_SPEED));
+        return new Bullet(position, new Vector(0, BULLET_SPEED), bulletDamage);
     }
 
     public void moveLeft() {
@@ -58,5 +60,33 @@ public class Player {
         ATTACK_SPEED -= speed;
         if (ATTACK_SPEED < 1)
             ATTACK_SPEED = 1;
+    }
+
+    public int getBulletDamage() {
+        return bulletDamage;
+    }
+
+    public void setBulletDamage(int bulletDamage) {
+        this.bulletDamage = bulletDamage;
+    }
+
+    public void increaseBulletDamage(int damage) {
+        bulletDamage += damage;
+    }
+
+    public void decreaseBulletDamage(int damage) {
+        bulletDamage -= damage;
+        if (bulletDamage < 1)
+            bulletDamage = 1;
+    }
+
+    public void takeDamage(int damage) {
+        health -= damage;
+        if (health < 0)
+            health = 0;
+    }
+
+    public boolean isDead() {
+        return health == 0;
     }
 }

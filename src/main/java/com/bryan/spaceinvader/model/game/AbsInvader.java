@@ -42,4 +42,12 @@ public abstract class AbsInvader {
     public void move(Vector vector) {
         position = position.add(vector);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbsInvader that = (AbsInvader) o;
+        return health == that.health && type == that.type && position.equals(that.position);
+    }
 }

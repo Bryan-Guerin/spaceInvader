@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -26,6 +27,10 @@ public class GameController extends BasicController implements Initializable {
     public Canvas canvas;
     public VBox progressPane;
     public Label scoreLabel;
+    public ProgressBar progressBar;
+    public Label progressPercentageLabel;
+    public Label currentLevelLabel;
+    public Label rightLifeLabel;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -33,8 +38,13 @@ public class GameController extends BasicController implements Initializable {
         stage.setWidth(1920);
         stage.setFullScreenExitHint("");
         stage.setFullScreenExitKeyCombination(null);
-
         Game game = new Game(canvas);
+
+        progressBar.progressProperty().bind(game.getProgress().progressProperty());
+        progressPercentageLabel.setLabelFor(progressBar);
+        scoreLabel.textProperty().bind(game.getProgress().scoreProperty());
+        currentLevelLabel.textProperty().bind(game.getProgress().currentLevelProperty());
+        rightLifeLabel.textProperty().bind(game.getProgress().livesProperty());
 
         AnimationTimer timer = new AnimationTimer() {
             private long lastTime = 0;

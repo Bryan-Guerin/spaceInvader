@@ -12,7 +12,10 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 public class Game {
@@ -24,7 +27,8 @@ public class Game {
     private final Canvas canvas;
     private final Player player;
     private final GameConfig gameConfig;
-    private Progress progress; // TODO
+    private final Progress progress;
+    private boolean isPaused = false;
 
     private record Rect(int leftGap, int topGap, int x, int y, int width, int height) {
     }
@@ -38,8 +42,9 @@ public class Game {
 //    TODO s'occuper de la difficulté pour créer la config de la partie et donc générer la vague
 
     private ArrayList<ArrayList<AbsInvader>> waves;
-    private final List<Bullet> invaderBullets = Collections.synchronizedList(new ArrayList<>());
-    private final List<Bullet> playerBullets = Collections.synchronizedList(new ArrayList<>());
+    private final ArrayList<InvaderShooter> shooters = new ArrayList<>();
+    private List<Bullet> invaderBullets = Collections.synchronizedList(new ArrayList<>());
+    private List<Bullet> playerBullets = Collections.synchronizedList(new ArrayList<>());
 
     public Game(Canvas canvas) {
         this.canvas = canvas;
@@ -48,11 +53,15 @@ public class Game {
         this.player = new Player((int) (canvas.getWidth() / 2));
         gameConfig = GameConfig.getGameConfig(settings.getDifficulty());
         rect = new Rect((int) ((canvas.getWidth() - gameConfig.getNumberOfColumns() * (90) + 45) / 2), 50, 90, 60, 45, 45);
+        progress = new Progress();
         generateWaves(0);
         handlePlayerShooting();
     }
 
     private void handlePlayerShooting() {
+        // TODO peaufiner en démarrant le thread sur le keyEvent et le stoppant pareil. Ainsi, il n'y a pas de décalage de phase lors du tir.
+        //    PB de synchro sur le début du tire du joueur => Ne commence pas à tirer directement, mais seulement si dans le timing.
+        //    Utiliser une autre méthode que le thread avec sleep. see : https://stackoverflow.com/questions/69974804/avoid-busy-waiting-warning-in-a-thread
         playerShootingThread = new Thread(() -> {
             while (true) {
                 if (isShooting)
@@ -96,19 +105,38 @@ public class Game {
 
     private void generateWaves(int level) {
         this.waves = new ArrayList<>();
+        int totalInvaders = 0;
 
         for (int i = 0; i < gameConfig.getNumberOfRows(); i++) {
             ArrayList<AbsInvader> line = new ArrayList<>();
             for (int j = 0; j < gameConfig.getNumberOfColumns(); j++) {
-                line.add(new Invader(new Position(rect.leftGap + rect.x * j, rect.topGap + rect.y * i), generateInvaderType()));
+                InvaderType type = generateInvaderType(i, j, level);
+                if (isNull(type))
+                    continue;
+                if (type.isShooter()) {
+                    InvaderShooter invader = new InvaderShooter(new Position(rect.leftGap + rect.x * j, rect.topGap + rect.y * i), type);
+                    shooters.add(invader);
+                    line.add(invader);
+                } else {
+                    line.add(new Invader(new Position(rect.leftGap + rect.x * j, rect.topGap + rect.y * i), type));
+                }
+                totalInvaders++;
             }
             waves.add(line);
         }
+        progress.setTotalInvaders(totalInvaders);
     }
 
-    private InvaderType generateInvaderType() {
+    private InvaderType generateInvaderType(int row, int column, int level) {
         // TODO compléter pour faire mieux avec tous les types en fonction des probas généré dans le gameConfig
-        return InvaderType.SOLDIER;
+        if (row <= 1)
+            return InvaderType.SHOOTER;
+        double prob = Math.random();
+        if (prob <= 0.35)
+            return InvaderType.SOLDIER;
+        if (prob <= 0.5)
+            return InvaderType.SHOOTER;
+        return null;
     }
 
     private void handleInputs() {
@@ -125,11 +153,19 @@ public class Game {
     }
 
     private void invaderShoot() {
-
+        shooters.forEach(invaderShooter -> {
+            if (Math.random() < gameConfig.getInvaderShotProbability())
+                invaderBullets.add(invaderShooter.shoot());
+        });
     }
 
     private void computeProgress() {
-
+        if (player.isDead()) {
+            progress.loseLife();
+            isPaused = true;
+            //TODO faire la fin de jeu propre (recommencer niveau et perdre une vie. Ou perdre (sauvegarde score etc ...)
+            logger.info("Life lost. Restarting game");
+        }
     }
 
     private void computeCollision() {
@@ -140,6 +176,47 @@ public class Game {
         if (player.position.x > canvas.getWidth() - Player.WIDTH)
             player.position.x = (int) (canvas.getWidth() - Player.WIDTH);
 
+        // Bullets out of canvas
+        playerBullets.removeIf(bullet -> bullet.position.y < 0);
+        invaderBullets.removeIf(bullet -> bullet.position.y > canvas.getHeight());
+
+        // Invader with player
+        playerBullets = playerBullets.stream()
+                .map(bullet -> {
+                    for (ArrayList<AbsInvader> wave : waves) {
+                        for (int i = 0; i < wave.size(); i++) {
+                            if (nonNull(wave.get(i)) && wave.get(i).position.isInRange(bullet.position, rect.width)) {
+                                if (wave.get(i).takeDamage(bullet.damage)) { // If the invader is killed
+                                    progress.decreaseTotalInvadersAlive();
+                                    progress.addScore(wave.get(i).getType().getScore());
+                                    int finalI = i;
+                                    if (wave.get(i).getType().isShooter())
+                                        shooters.removeIf(shooter -> shooter.equals(wave.get(finalI)));
+                                    wave.set(i, null);
+                                }
+                                return null; // Remove the bullet
+                            }
+                        }
+                    }
+                    return bullet;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        // Player with invaders
+        invaderBullets = invaderBullets.stream()
+                .map(bullet -> {
+                    if (player.position.isInRange(bullet.position, Player.WIDTH)) {
+                        player.takeDamage(bullet.damage);
+                        return null;
+                    }
+                    return bullet;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        invaderBullets.removeIf(Objects::isNull);
+        playerBullets.removeIf(Objects::isNull);
     }
 
     private void render() {
@@ -178,7 +255,8 @@ public class Game {
     private void renderInvaders() {
         for (ArrayList<AbsInvader> wave : waves) {
             for (AbsInvader invader : wave) {
-                drawInvader(invader);
+                if (nonNull(invader))
+                    drawInvader(invader);
             }
         }
     }
@@ -202,16 +280,26 @@ public class Game {
     }
 
     public void play() {
-        handleInputs();
-        invaderShoot();
-        bulletMove();
-        computeCollision();
-        computeProgress();
-        render();
+        // TODO faire le passage au niveau suivant
+        //  Puis la boutique et la fin de partie
+        //  Faire barre de progression en % et ajouter barre de PV actuel du joueur
+        //  Faire un affichage des vies restantes en image (pas en texte)
+        if (!isPaused) {
+            handleInputs();
+            invaderShoot();
+            bulletMove();
+            computeCollision();
+            computeProgress();
+            render();
+        }
     }
 
     public static void stopPlayerShootingThread() {
         if (nonNull(playerShootingThread))
             playerShootingThread.interrupt();
+    }
+
+    public Progress getProgress() {
+        return progress;
     }
 }
