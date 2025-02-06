@@ -1,0 +1,66 @@
+
+/* GAME VIEW */
+
+#shopMenu, #pauseMenu {
+    -fx-z-index: 10;
+    -fx-position: absolute;
+    -fx-top: 50%;
+    -fx-left: 50%;
+    -fx-translate-x: -50%;
+    -fx-translate-y: -50%;
+    -fx-padding: 20;
+    -fx-spacing: 10;
+    -fx-background-color: rgba(100, 100, 100, 0.8);
+    -fx-border-color: white;
+    -fx-border-width: 2;
+    -fx-text-fill: white;
+}
+
+#canvas {
+    -fx-z-index: 1;
+}
+
+
+/* SETTINGS VIEW */
+.title {
+    -fx-text-fill: white;
+    -fx-font-size: 50px;
+}
+
+.settingLine {
+    -fx-spacing: 20;
+    -fx-padding: 10;
+    -fx-alignment: center;
+    -fx-max-width: 500px;
+}
+
+.settingLine .label {
+    -fx-text-fill: white;
+    -fx-font-size: 30px;
+}
+
+/* GLOBAL */
+
+.button {
+    -fx-font-family: 'Press Start 2P', cursive;
+    -fx-padding: 15 25 15 25;
+    -fx-font-size: 15px;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-background-color: rgb(5, 137, 5);
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(153, 153, 153, 0.9), 5, 0, 0, 0);
+    -fx-margin: 10 0 10 0;
+}
+
+.button:hover {
+    -fx-background-color: rgb(6, 130, 6);
+    -fx-effect: dropshadow(gaussian, rgba(102, 102, 102, 0.9), 5, 0, 0, 0);
+}
+
+.button:pressed {
+    -fx-background-color: rgb(6, 110, 6);
+    -fx-effect: dropshadow(gaussian, rgba(102, 102, 102, 0.9), 1, 0, 0, 0);
+    -fx-translateY: 6;
+}

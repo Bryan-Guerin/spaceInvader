@@ -15,9 +15,10 @@ public abstract class BasicController {
     public static Stage stage;
 
     protected void changeCurrentScene(Stage stage, String sceneName, boolean switchFullScreen) {
-        Scene scene = new Scene(ResourceManager.loadResource(sceneName, Parent.class, ResourceType.FXML));
+        Scene scene = new Scene(ResourceManager.loadResource(sceneName, Parent.class, ResourceType.FXML), 1920, 1080);
         stage.setScene(scene);
         stage.setFullScreen(switchFullScreen);
+        scene.getStylesheets().add(ResourceManager.computeFullPath("style.css", ResourceType.CSS).toExternalForm());
 
         if (logger.isDebugEnabled())
             logger.debug("Change scene to {} in stage {}", sceneName, stage.getTitle());

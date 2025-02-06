@@ -6,34 +6,35 @@
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bryan.spaceinvader.controller.SettingsController" style="-fx-background-color: black;">
     <center>
         <VBox alignment="CENTER" prefHeight="400" prefWidth="550.0" BorderPane.alignment="CENTER">
-            <Label text="Settings" style="-fx-font-size: 20px;"/>
-            <HBox alignment="CENTER" spacing="10">
+            <Label styleClass="title" text="Settings"/>
+            <HBox styleClass="settingLine">
                 <Label text="Move Left:"/>
                 <Label fx:id="moveLeftLabel" text="Q"/>
+                <Region HBox.hgrow="ALWAYS"/>
                 <Button fx:id="changeMoveLeftButton" text="Change" onAction="#onChangeMoveLeft"/>
             </HBox>
-            <HBox alignment="CENTER" spacing="10">
+            <HBox styleClass="settingLine">
                 <Label text="Move Right:"/>
                 <Label fx:id="moveRightLabel" text="D"/>
+                <Region HBox.hgrow="ALWAYS"/>
                 <Button fx:id="changeMoveRightButton" text="Change" onAction="#onChangeMoveRight"/>
             </HBox>
-            <HBox alignment="CENTER" spacing="10">
+            <HBox styleClass="settingLine">
                 <Label text="Shoot:"/>
                 <Label fx:id="shootLabel" text="SPACE"/>
+                <Region HBox.hgrow="ALWAYS"/>
                 <Button fx:id="changeShootButton" text="Change" onAction="#onChangeShoot"/>
             </HBox>
-            <HBox alignment="CENTER" spacing="10">
+            <HBox styleClass="settingLine">
                 <Label text="Volume:"/>
-                <Slider fx:id="volumeSlider" cache="true" max="1" blockIncrement="0.1" majorTickUnit="0.25" snapToTicks="true" showTickLabels="true" showTickMarks="true"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Slider fx:id="volumeSlider" cache="true" max="1" blockIncrement="0.1" majorTickUnit="0.25" snapToTicks="true"/>
             </HBox>
 
-            <HBox alignment="CENTER" spacing="10">
-                <Label text="Frequency:"/>
-                <Slider fx:id="frequencySlider" min="30" max="120" cache="true" blockIncrement="5" majorTickUnit="30" snapToTicks="true" showTickLabels="true" showTickMarks="true"/>
-            </HBox>
-            <HBox alignment="CENTER" spacing="10">
-                <Label text="Difficulty:"/>
-                <ComboBox fx:id="difficultyComboBox" promptText="Select a difficulty" onAction="#onChangeDifficulty"/>
+            <HBox styleClass="settingLine">
+                <Label text="Difficulté:"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <ComboBox fx:id="difficultyComboBox" promptText="Choisir la difficulté" onAction="#onChangeDifficulty"/>
             </HBox>
 
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">

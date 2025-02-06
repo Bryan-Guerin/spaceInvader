@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +41,7 @@ public class ResourceManager {
      * @return Return the loaded resource as a T type.
      */
     public static <T> T loadResource(String fileName, Class<T> type, ResourceType resourceType) {
-        String fullPath = computeFullPath(fileName, resourceType);
+        String fullPath = computePath(fileName, resourceType);
 
         if (logger.isTraceEnabled())
             logger.trace("Loading resource : {} as {}", fullPath, resourceType.name());
@@ -64,9 +63,10 @@ public class ResourceManager {
             }
             if (cache_image.size() > IMAGE_CACHE_SIZE)
                 cache_image.clear();
-        } else if (type.equals(Media.class)) { // TODO check if it works
-            object = type.cast(ResourceManager.class.getResourceAsStream(fullPath));
-            cache_audio.put(fullPath, (Media) object);
+        } else if (type.equals(Media.class)) {
+            Media media = new Media(Objects.requireNonNull(ResourceManager.class.getResource(fullPath)).toString());
+            cache_audio.put(fullPath, media);
+            object = type.cast(media);
             if (cache_audio.size() > AUDIO_CACHE_SIZE)
                 cache_audio.clear();
         } else if (type.equals(FXMLLoader.class)) {
@@ -74,9 +74,14 @@ public class ResourceManager {
         } else if (type.equals(Parent.class)) {
             try {
                 object = type.cast(new FXMLLoader(ResourceManager.class.getResource(fullPath)).load());
-            } catch (IOException | NullPointerException e) {
-                logger.error("File {} not found !", fullPath, e);
-                throw new AssertionError("File " + fullPath + " not found !");
+            } catch (Exception e) {
+                if (e instanceof IOException) {
+                    logger.error("File {} not found !", fullPath, e);
+                    throw new AssertionError("File " + fullPath + " not found !");
+                } else {
+                    logger.error("Error while loading resource {} !", fullPath, e);
+                    throw new AssertionError("Error while loading resource " + fullPath + " !");
+                }
             }
         } else {
             throw new IllegalArgumentException("Unsupported resource type: " + type.getName());
@@ -88,11 +93,15 @@ public class ResourceManager {
         return object;
     }
 
-    private static String computeFullPath(String fileName, ResourceType resourceType) {
+    private static String computePath(String fileName, ResourceType resourceType) {
         return BASE_PATH + resourceType.getPathPrefix() + fileName;
     }
 
+    public static URL computeFullPath(String fileName, ResourceType resourceType) {
+        return ResourceManager.class.getResource(BASE_PATH + resourceType.getPathPrefix() + fileName);
+    }
+
     private static Image getDefaultImage() {
-        return new Image(Objects.requireNonNull(ResourceManager.class.getResource(computeFullPath("unknown.png", ResourceType.IMAGE))).toString());
+        return new Image(Objects.requireNonNull(ResourceManager.class.getResource(computePath("unknown.png", ResourceType.IMAGE))).toString());
     }
 }

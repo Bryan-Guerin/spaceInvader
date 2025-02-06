@@ -23,8 +23,6 @@ public class SettingsController extends BasicController implements Initializable
     @FXML
     public Slider volumeSlider;
     @FXML
-    public Slider frequencySlider;
-    @FXML
     public ComboBox<Settings.Difficulty> difficultyComboBox;
     @FXML
     private Label moveLeftLabel;
@@ -43,10 +41,6 @@ public class SettingsController extends BasicController implements Initializable
             settings.setVolume(newValue.doubleValue());
         });
 
-        frequencySlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            settings.setFrequency(newValue.doubleValue());
-        });
-
         logger.info("Settings controller initialized");
     }
 
@@ -56,7 +50,6 @@ public class SettingsController extends BasicController implements Initializable
         shootLabel.setText(settings.getKeyBinding(Settings.GameAction.SHOOT).getKeyCode().toString());
 
         volumeSlider.setValue(settings.getVolume());
-        frequencySlider.setValue(settings.getFrequency());
         difficultyComboBox.setValue(settings.getDifficulty());
     }
 

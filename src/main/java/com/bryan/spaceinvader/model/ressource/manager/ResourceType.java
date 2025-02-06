@@ -3,7 +3,9 @@ package com.bryan.spaceinvader.model.ressource.manager;
 public enum ResourceType {
     FXML("fxml/"),
     IMAGE("assets/image/"),
-    AUDIO("assets/audio/");
+    AUDIO("assets/audio/"),
+    CSS("style/"),
+    FONT("font/");
 
     private final String pathPrefix;
 
