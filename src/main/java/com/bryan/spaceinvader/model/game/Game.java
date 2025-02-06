@@ -129,6 +129,7 @@ public class Game {
 
     private InvaderType generateInvaderType(int row, int column, int level) {
         // TODO compléter pour faire mieux avec tous les types en fonction des probas généré dans le gameConfig
+        // Certainement placer ça dans une autre classe pour mieux l'organiser et permettre de le compléter en appelant d'autres classes
         if (row <= 1)
             return InvaderType.SHOOTER;
         double prob = Math.random();
@@ -166,6 +167,9 @@ public class Game {
             //TODO faire la fin de jeu propre (recommencer niveau et perdre une vie. Ou perdre (sauvegarde score etc ...)
             logger.info("Life lost. Restarting game");
         }
+
+        if (progress.isLevelCompleted())
+            startNextLevel();
     }
 
     private void computeCollision() {
@@ -294,6 +298,14 @@ public class Game {
         }
     }
 
+    public void startNextLevel() {
+        progress.nextLevel();
+        invaderBullets.clear();
+        playerBullets.clear();
+        generateWaves(progress.getCurrentLevel());
+        isPaused = false;
+    }
+
     public static void stopPlayerShootingThread() {
         if (nonNull(playerShootingThread))
             playerShootingThread.interrupt();
@@ -301,5 +313,10 @@ public class Game {
 
     public Progress getProgress() {
         return progress;
+    }
+
+    public void save() {
+        // TODO un jour peut être (suffit de save le current level, hp, score, money, etc ...)
+        logger.info("Not supported yet");
     }
 }

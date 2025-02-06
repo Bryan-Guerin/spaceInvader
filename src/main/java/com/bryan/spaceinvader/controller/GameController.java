@@ -4,12 +4,14 @@ import com.bryan.spaceinvader.model.Settings;
 import com.bryan.spaceinvader.model.game.Game;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -23,14 +25,20 @@ public class GameController extends BasicController implements Initializable {
     @FXML
     public StackPane root;
     public BorderPane gamePane;
-    public VBox scorePane;
     public Canvas canvas;
     public VBox progressPane;
     public Label scoreLabel;
     public ProgressBar progressBar;
-    public Label progressPercentageLabel;
     public Label currentLevelLabel;
     public Label rightLifeLabel;
+    public ProgressBar healthBar;
+    public VBox healthPane;
+    public VBox shopMenu;
+    public HBox shopLine1;
+    public HBox shopLine2;
+    public VBox pauseMenu;
+
+    private Game game;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -38,13 +46,15 @@ public class GameController extends BasicController implements Initializable {
         stage.setWidth(1920);
         stage.setFullScreenExitHint("");
         stage.setFullScreenExitKeyCombination(null);
-        Game game = new Game(canvas);
+        game = new Game(canvas);
 
         progressBar.progressProperty().bind(game.getProgress().progressProperty());
-        progressPercentageLabel.setLabelFor(progressBar);
         scoreLabel.textProperty().bind(game.getProgress().scoreProperty());
         currentLevelLabel.textProperty().bind(game.getProgress().currentLevelProperty());
         rightLifeLabel.textProperty().bind(game.getProgress().livesProperty());
+
+        pauseMenu.setVisible(false);
+        shopMenu.setVisible(false);
 
         AnimationTimer timer = new AnimationTimer() {
             private long lastTime = 0;
@@ -72,5 +82,26 @@ public class GameController extends BasicController implements Initializable {
             stage.getScene().setOnKeyReleased(game::keyReleased);
             timer.start();
         });
+    }
+
+    public void onSaveButtonClick(ActionEvent actionEvent) {
+        game.save();
+        this.changeCurrentScene(stage, "menu-view.fxml");
+    }
+
+    public void onNextLevelButtonClick(ActionEvent actionEvent) {
+        game.startNextLevel();
+    }
+
+    public void onPauseButtonClick(ActionEvent actionEvent) {
+
+    }
+
+    public void onSettingsButtonClick(ActionEvent actionEvent) {
+
+    }
+
+    public void onQuitButtonClick(ActionEvent actionEvent) {
+
     }
 }

@@ -1,20 +1,19 @@
 package com.bryan.spaceinvader.model.game;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableIntegerValue;
 import javafx.beans.value.ObservableValue;
-
-import static java.util.Objects.isNull;
 
 public class Progress {
     private int currentLevel = 0;
     private int score = 0;
     private int lives = 3;
-    private int totalInvaders = 0;
-    private int invadersKilled = 0;
+
+    @JsonIgnore private transient int totalInvaders = 0;
+    @JsonIgnore private transient int invadersKilled = 0;
 
     private final IntegerProperty propertyProgressPercentage = new SimpleIntegerProperty(0);
     private final StringProperty propertyScore = new SimpleStringProperty("Score : " + score);
@@ -70,7 +69,7 @@ public class Progress {
 
     public void decreaseTotalInvadersAlive() {
         invadersKilled--;
-        propertyProgressPercentage.set((int) ((invadersKilled / (double) totalInvaders) * 100));
+        propertyProgressPercentage.set((int) (invadersKilled / (double) totalInvaders));
     }
 
     public void setTotalInvaders(int totalInvaders) {
@@ -93,5 +92,9 @@ public class Progress {
 
     public ObservableValue<String> livesProperty() {
         return propertyLives;
+    }
+
+    public boolean isLevelCompleted() {
+        return invadersKilled == totalInvaders;
     }
 }

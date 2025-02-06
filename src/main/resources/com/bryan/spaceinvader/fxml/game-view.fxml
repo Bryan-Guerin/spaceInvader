@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.canvas.*?>
+<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
-
-<StackPane fx:id="root" style="-fx-text-fill: white;"
-           xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="com.bryan.spaceinvader.controller.GameController" prefHeight="1080" prefWidth="1920">
+<?import javafx.scene.shape.Rectangle?>
+<StackPane fx:id="root" prefHeight="1080" prefWidth="1920" style="-fx-text-fill: white;"
+           xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.bryan.spaceinvader.controller.GameController">
 
     <BorderPane fx:id="gamePane" style="-fx-background-color: black;">
 
-        <!-- Zone Gauche : Score -->
+        <!--        Zone Haut : Affichage du Menu de pause en position centrée -->
+        <top>
+            <VBox fx:id="pauseMenu" alignment="CENTER" prefHeight="100" prefWidth="1920">
+                <Button onAction="#onPauseButtonClick" text="REPRENDRE"/>
+                <Button onAction="#onSettingsButtonClick" text="OPTION"/>
+                <Button onAction="#onQuitButtonClick" text="QUITTER"/>
+            </VBox>
+        </top>
+
+        <!-- Zone Gauche : Point de vie et santé -->
         <left>
-            <VBox fx:id="scorePane" style="-fx-border-color: white; -fx-border-width: 0 2 0 0;" prefWidth="250" alignment="CENTER">
-                <Label fx:id="scoreLabel" text="Score : 0" style="-fx-font-size: 24;" textFill="WHITE" />
+            <VBox fx:id="healthPane" alignment="CENTER" prefWidth="250"
+                  style="-fx-border-color: white; -fx-border-width: 0 2 0 0;">
+                <Region prefHeight="20"/>
+                <Label fx:id="rightLifeLabel" style="-fx-font-size: 24;" text="Points de vie : X" textFill="WHITE"/>
+                <Region prefHeight="20"/>
+                <ProgressBar fx:id="healthBar" style="-fx-progress-color: red;" prefHeight="800" prefWidth="30"/>
             </VBox>
         </left>
 
@@ -25,23 +37,35 @@
 
         <!-- Zone Droite : Progression (labels + barre verticale) -->
         <right>
-            <VBox fx:id="progressPane" style="-fx-border-color: white; -fx-border-width: 0 0 0 2;" prefWidth="384" alignment="TOP_CENTER">
+            <VBox fx:id="progressPane" alignment="TOP_CENTER" prefWidth="384"
+                  style="-fx-border-color: white; -fx-border-width: 0 0 0 2;">
 
-                <!-- Zone haute : Points de vie et niveau -->
-                <Label fx:id="rightLifeLabel" style="-fx-font-size: 18;" text="Points de vie : X" textFill="WHITE"/>
-                <Rectangle width="200" height="2" fill="white" />
-                <Label fx:id="currentLevelLabel" style="-fx-font-size: 18;" text="Niveau : X" textFill="WHITE"/>
+                <!-- Zone haute : Affichage du niveau et du score -->
+                <Label fx:id="currentLevelLabel" style="-fx-font-size: 24;" text="Niveau : X" textFill="WHITE"/>
+                <Rectangle fill="white" height="2" width="200"/>
+                <Label fx:id="scoreLabel" style="-fx-font-size: 24;" text="Score : 0" textFill="WHITE"/>
 
                 <!-- Séparateur (espace entre la partie haute et la barre) -->
-                <Region prefHeight="20" />
+                <Region prefHeight="20"/>
 
-                <!-- Zone centrale : Barre de progression verticale -->
-                <ProgressBar fx:id="progressBar" style="-fx-accent: green;" prefHeight="30" maxWidth="800" rotate="90"/>
-
-                <!-- Zone basse : Pourcentage (facultatif) -->
-                <Label fx:id="progressPercentageLabel" text="X %" style="-fx-font-size: 14;" textFill="WHITE" />
+                <!-- Zone centrale : Barre de progression verticale  avec une progression verticale -->
+                <ProgressBar fx:id="progressBar" style="-fx-progress-color: green;" prefHeight="800" prefWidth="30"/>
             </VBox>
         </right>
+
+        <!--        Zone Bas : Affichage de la boutique de fin de niveau-->
+        <bottom>
+            <VBox fx:id="shopMenu" alignment="CENTER">
+                <HBox alignment="CENTER" spacing="50" fx:id="shopLine1">
+                </HBox>
+                <HBox alignment="CENTER" spacing="50" fx:id="shopLine2">
+                </HBox>
+                <HBox alignment="BASELINE_CENTER" spacing="100">
+                    <Button onAction="#onSaveButtonClick" text="Sauvegarder"/>
+                    <Button onAction="#onNextLevelButtonClick" text="Niveau Suivant"/>
+                </HBox>
+            </VBox>
+        </bottom>
 
     </BorderPane>
 </StackPane>

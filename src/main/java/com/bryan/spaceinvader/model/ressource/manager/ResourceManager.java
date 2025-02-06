@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,9 +63,10 @@ public class ResourceManager {
             }
             if (cache_image.size() > IMAGE_CACHE_SIZE)
                 cache_image.clear();
-        } else if (type.equals(Media.class)) { // TODO check if it works
-            object = type.cast(ResourceManager.class.getResourceAsStream(fullPath));
-            cache_audio.put(fullPath, (Media) object);
+        } else if (type.equals(Media.class)) {
+            Media media = new Media(Objects.requireNonNull(ResourceManager.class.getResource(fullPath)).toString());
+            cache_audio.put(fullPath, media);
+            object = type.cast(media);
             if (cache_audio.size() > AUDIO_CACHE_SIZE)
                 cache_audio.clear();
         } else if (type.equals(FXMLLoader.class)) {
@@ -74,9 +74,14 @@ public class ResourceManager {
         } else if (type.equals(Parent.class)) {
             try {
                 object = type.cast(new FXMLLoader(ResourceManager.class.getResource(fullPath)).load());
-            } catch (IOException | NullPointerException e) {
-                logger.error("File {} not found !", fullPath, e);
-                throw new AssertionError("File " + fullPath + " not found !");
+            } catch (Exception e) {
+                if (e instanceof IOException) {
+                    logger.error("File {} not found !", fullPath, e);
+                    throw new AssertionError("File " + fullPath + " not found !");
+                } else {
+                    logger.error("Error while loading resource {} !", fullPath, e);
+                    throw new AssertionError("Error while loading resource " + fullPath + " !");
+                }
             }
         } else {
             throw new IllegalArgumentException("Unsupported resource type: " + type.getName());

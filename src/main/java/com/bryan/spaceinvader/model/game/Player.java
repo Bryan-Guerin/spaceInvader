@@ -1,14 +1,22 @@
 package com.bryan.spaceinvader.model.game;
 
+import com.bryan.spaceinvader.model.Settings;
+import com.bryan.spaceinvader.model.ressource.manager.ResourceManager;
+import com.bryan.spaceinvader.model.ressource.manager.ResourceType;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 public class Player {
     public static final int WIDTH = 45;
 
     // TODO retirer les static sur les trucs pas besoin et init dans le constructor
+    private static final Settings settings = Settings.getInstance();
     private static final int POSITION_Y = 900;
     private static final int SPEED = 3;
     private static int BULLET_SPEED = -3;
     private static int ATTACK_SPEED = 3; // bullets per second
     private static final String[] vesselTextures = {"V0.png", "V1.png", "V2.png"};
+    private final MediaPlayer mediaPlayer = new MediaPlayer(ResourceManager.loadResource("shoot.wav", Media.class, ResourceType.AUDIO));
     private int currentVessel = 0;
     private int bulletDamage = 1;
     private int health = 3;
@@ -20,6 +28,9 @@ public class Player {
     }
 
     public Bullet shoot() {
+        mediaPlayer.stop();
+        mediaPlayer.setVolume(settings.getVolume() / 4); // This sound is too loud. Have to fix the source
+        mediaPlayer.play();
         return new Bullet(position, new Vector(0, BULLET_SPEED), bulletDamage);
     }
 
