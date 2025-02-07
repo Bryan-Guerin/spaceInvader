@@ -27,4 +27,6 @@ module com.bryan.spaceinvader {
     opens com.bryan.spaceinvader.model.game to com.fasterxml.jackson.databind, javafx.fxml;
     exports com.bryan.spaceinvader.model.shop;
     opens com.bryan.spaceinvader.model.shop to com.fasterxml.jackson.databind, javafx.fxml;
+    opens com.bryan.spaceinvader.model.player to com.fasterxml.jackson.databind, javafx.fxml;
+    exports com.bryan.spaceinvader.model.player;
 }
