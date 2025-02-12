@@ -24,7 +24,7 @@ public class Settings implements Serializable {
     private static final double DEFAULT_FREQUENCY = 60.0;
 
     private static final Logger logger = LogManager.getLogger(Settings.class);
-    private static final Path filePath = Paths.get("spaceinader/cfg/settings.json").toAbsolutePath();
+    private static final Path filePath = Paths.get("spaceinvader/cfg/settings.json").toAbsolutePath();
 
     @JsonIgnore
     private static Settings instance;

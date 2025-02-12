@@ -195,6 +195,9 @@ public class Game {
             logger.info("Level {} completed. Starting next level.", progress.getCurrentLevel());
             endCurrentLevel();
         }
+
+        if (progress.isLevelCompleted())
+            endCurrentLevel();
     }
 
     private void computeCollision() {
