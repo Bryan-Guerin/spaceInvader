@@ -24,7 +24,7 @@ public class Settings implements Serializable {
     private static final double DEFAULT_FREQUENCY = 60.0;
 
     private static final Logger logger = LogManager.getLogger(Settings.class);
-    private static final Path filePath = Paths.get("cfg/settings.json").toAbsolutePath();
+    private static final Path filePath = Paths.get("spaceinvader/cfg/settings.json").toAbsolutePath();
 
     @JsonIgnore
     private static Settings instance;
@@ -39,7 +39,7 @@ public class Settings implements Serializable {
     private final HashMap<GameAction, KeyBind> keyBindings = new HashMap<>();
 
     private double volume;
-    private double frequency;
+    private double frequency; // TODO fixer à 60 et retirer le custom
     private Difficulty difficulty;
 
     @JsonIgnore
@@ -118,6 +118,7 @@ public class Settings implements Serializable {
 
     private void getDefault() {
         getDefaultKeyBinds();
+        difficulty = Difficulty.NORMAL;
         volume = DEFAULT_VOLUME;
         frequency = DEFAULT_FREQUENCY;
     }

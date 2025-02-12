@@ -6,15 +6,15 @@ public class Bullet {
 
     public Position position;
     public Vector vector;
-    public int damage;
+    public final double damage;
 
-    public Bullet(Position position, Vector vector, int damage) {
+    public Bullet(Position position, Vector vector, double damage) {
         this.damage = damage;
-        this.position = position;
+        this.position = position.copy();
         this.vector = vector;
     }
 
     public void move() {
-        position = position.add(vector);
+        position.move(vector);
     }
 }

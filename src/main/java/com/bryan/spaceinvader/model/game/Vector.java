@@ -1,18 +1,14 @@
 package com.bryan.spaceinvader.model.game;
 
 public class Vector {
-    int dx, dy;
+    final double dx, dy;
 
-    public Vector(int x, int y) {
-        this.dx = x;
-        this.dy = y;
+    public Vector(double dx, double dy) {
+        this.dx = dx;
+        this.dy = dy;
     }
 
     public Vector add(Vector v) {
         return new Vector(dx + v.dx, dy + v.dy);
-    }
-
-    public Vector multiply(int scalar) {
-        return new Vector(dx * scalar, dy * scalar);
     }
 }

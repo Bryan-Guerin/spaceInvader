@@ -12,6 +12,7 @@ module com.bryan.spaceinvader {
     requires org.apache.logging.log4j;
     requires com.fasterxml.jackson.databind;
     requires java.desktop;
+    requires annotations;
 
     exports com.bryan.spaceinvader;
     exports com.bryan.spaceinvader.controller;
@@ -24,4 +25,8 @@ module com.bryan.spaceinvader {
     opens com.bryan.spaceinvader.model.ressource.manager to javafx.fxml, com.fasterxml.jackson.databind;
     exports com.bryan.spaceinvader.model.game;
     opens com.bryan.spaceinvader.model.game to com.fasterxml.jackson.databind, javafx.fxml;
+    exports com.bryan.spaceinvader.model.shop;
+    opens com.bryan.spaceinvader.model.shop to com.fasterxml.jackson.databind, javafx.fxml;
+    opens com.bryan.spaceinvader.model.player to com.fasterxml.jackson.databind, javafx.fxml;
+    exports com.bryan.spaceinvader.model.player;
 }

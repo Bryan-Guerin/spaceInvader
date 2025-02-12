@@ -2,7 +2,7 @@ package com.bryan.spaceinvader.model.game;
 
 public abstract class AbsInvader {
     public Position position;
-    public int health;
+    public double health;
     public InvaderType type;
 
     public AbsInvader(Position position, InvaderType type) {
@@ -16,7 +16,7 @@ public abstract class AbsInvader {
      * @param damage damage to deal
      * @return true if the invader is dead
      */
-    public boolean takeDamage(int damage) {
+    public boolean takeDamage(double damage) {
         this.health -= damage;
         return this.health <= 0;
     }
@@ -31,7 +31,7 @@ public abstract class AbsInvader {
         return position;
     }
 
-    public int getHealth() {
+    public double getHealth() {
         return health;
     }
 
@@ -40,7 +40,7 @@ public abstract class AbsInvader {
     }
 
     public void move(Vector vector) {
-        position = position.add(vector);
+        position.move(vector);
     }
 
     @Override

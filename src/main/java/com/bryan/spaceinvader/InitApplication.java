@@ -10,12 +10,15 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 public class InitApplication extends Application {
 
@@ -23,9 +26,12 @@ public class InitApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Scene scene = new Scene(ResourceManager.loadResource("menu-view.fxml", FXMLLoader.class, ResourceType.FXML).load(), 1422, 800);
-        stage.setTitle("Space Invaders");
+        Scene scene = new Scene(ResourceManager.loadResource("menu-view.fxml", FXMLLoader.class, ResourceType.FXML).load(), 1920, 1080);
         stage.getIcons().add(ResourceManager.loadResource("logo.png", Image.class, ResourceType.IMAGE));
+        scene.getStylesheets().add(ResourceManager.computeFullPath("style.css", ResourceType.CSS).toExternalForm());
+        Font.loadFont(ResourceManager.computeFullPath("PressStart2P-Regular.ttf", ResourceType.FONT).toExternalForm(), 20);
+        stage.setTitle("Space Invaders");
+        stage.setMaximized(true);
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent windowEvent) {

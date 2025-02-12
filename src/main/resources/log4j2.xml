@@ -8,10 +8,10 @@
         <Console name="CONSOLE">
             <PatternLayout pattern="%d{ISO8601} [%t] %p %logger{1.} - %m%n"/>
         </Console>
-        <File name="MAIN" fileName="logs/main.log">
+        <File name="MAIN" fileName="spaceinader/logs/main.log">
             <PatternLayout pattern="%d{ISO8601} [%t] %p %logger{1.} - %m%n"/>
         </File>
-        <File name="DEBUG_LOG" fileName="logs/debug.log">
+        <File name="DEBUG_LOG" fileName="spaceinader/logs/debug.log">
             <PatternLayout pattern="%d{UNIX_MILLIS} [%t] %p %logger{1.} - %m%n"/>
         </File>
     </Appenders>

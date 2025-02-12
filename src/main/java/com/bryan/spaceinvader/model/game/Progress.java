@@ -1,49 +1,44 @@
 package com.bryan.spaceinvader.model.game;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableIntegerValue;
 import javafx.beans.value.ObservableValue;
-
-import static java.util.Objects.isNull;
+import javafx.scene.layout.VBox;
 
 public class Progress {
-    private int currentLevel = 0;
-    private int score = 0;
-    private int lives = 3;
-    private int totalInvaders = 0;
-    private int invadersKilled = 0;
+    private final VBox scoreBar;
 
-    private final IntegerProperty propertyProgressPercentage = new SimpleIntegerProperty(0);
-    private final StringProperty propertyScore = new SimpleStringProperty("Score : " + score);
-    private final StringProperty propertyCurrentLevel = new SimpleStringProperty("Level " + currentLevel);
-    private final StringProperty propertyLives = new SimpleStringProperty("Lives : " + lives);
+    private int totalScore;
+    private int currentLevel;
+    private int score;
+    private int lives;
+
+    @JsonIgnore
+    private transient int totalInvaders;
+    @JsonIgnore
+    private transient int invadersKilled;
+
+    private final StringProperty propertyScore = new SimpleStringProperty();
+    private final StringProperty propertyCurrentLevel = new SimpleStringProperty();
+    private final StringProperty propertyLives = new SimpleStringProperty();
+
+    public Progress(VBox scoreBar) {
+        this.scoreBar = scoreBar;
+        reset();
+    }
 
     public int getCurrentLevel() {
         return currentLevel;
     }
 
-    public int getScore() {
-        return score;
-    }
-
-    public int getLives() {
-        return lives;
-    }
-
-    public void nextLevel() {
-        setCurrentLevel(currentLevel + 1);
-        setTotalInvaders(0);
-    }
-
     private void setCurrentLevel(int currentLevel) {
         this.currentLevel = currentLevel;
-        propertyCurrentLevel.set("Level " + currentLevel);
+        propertyCurrentLevel.set("Niveau " + currentLevel);
     }
 
     public void addScore(int score) {
+        totalScore += score;
         setScore(this.score + score);
     }
 
@@ -58,7 +53,12 @@ public class Progress {
 
     private void setLives(int lives) {
         this.lives = lives;
-        propertyLives.set("Lives : " + this.lives);
+        propertyLives.set("Vies restantes : " + this.lives);
+    }
+
+    public void nextLevel() {
+        setCurrentLevel(currentLevel + 1);
+        setTotalInvaders(0);
     }
 
     public void reset() {
@@ -66,21 +66,33 @@ public class Progress {
         setScore(0);
         setLives(3);
         setTotalInvaders(0);
+        totalScore = 0;
     }
 
-    public void decreaseTotalInvadersAlive() {
-        invadersKilled--;
-        propertyProgressPercentage.set((int) ((invadersKilled / (double) totalInvaders) * 100));
+    public void recordKill(int score) {
+        invadersKilled++;
+        updateProgressPercentage((double) invadersKilled / totalInvaders);
+        addScore(score);
     }
 
     public void setTotalInvaders(int totalInvaders) {
         this.totalInvaders = totalInvaders;
         this.invadersKilled = 0;
-        propertyProgressPercentage.set(0);
+        updateProgressPercentage(0);
     }
 
-    public ObservableValue<? extends Number> progressProperty() {
-        return propertyProgressPercentage;
+    public void spendScore(int score) {
+        this.score -= score;
+        setScore(this.score);
+    }
+
+    /**
+     * Update the score bar
+     *
+     * @param progressPercentage Percentage of invaders killed [0, 1]
+     */
+    private void updateProgressPercentage(double progressPercentage) {
+        scoreBar.setPrefHeight(scoreBar.getMaxHeight() * progressPercentage);
     }
 
     public ObservableValue<String> scoreProperty() {
@@ -93,5 +105,17 @@ public class Progress {
 
     public ObservableValue<String> livesProperty() {
         return propertyLives;
+    }
+
+    public boolean isLevelCompleted() {
+        return invadersKilled == totalInvaders;
+    }
+
+    public int getTotalScore() {
+        return totalScore;
+    }
+
+    public int getScore() {
+        return this.score;
     }
 }
