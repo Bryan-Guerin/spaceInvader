@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
 <VBox xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.bryan.spaceinvader.controller.MenuController"
       alignment="CENTER" prefHeight="400.0" prefWidth="550.0" style="-fx-background-color: black;"
       spacing="20">
+    <Label fx:id="title" text="Space Invader"/>
+    <Region fx:id="titleSeparator"/>
     <Button onAction="#onPlayButtonClick" text="JOUER"/>
     <Button onAction="#onSettingsButtonClick" text="OPTION"/>
     <Button onAction="#onQuitButtonClick" text="QUITTER"/>
+    <Region fx:id="bottomSeparator"/>
 </VBox>

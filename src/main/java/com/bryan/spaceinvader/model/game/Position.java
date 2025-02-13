@@ -26,7 +26,25 @@ public class Position {
         return p.x == x && p.y == y;
     }
 
-    public boolean isInRange(Position p, int range) {
-        return Math.abs(p.x - x) <= range && Math.abs(p.y - y) <= range;
+    public boolean isInSquarePerimeter(Bullet bullet, int a) {
+        double left = x - a / 2.0;
+        double right = x + a / 2.0;
+        double top = y - a / 2.0;
+        double bottom = y + a / 2.0;
+        double bulletHalfWidth = Bullet.WIDTH / 2.0;
+        double bulletHalfHeight = Bullet.HEIGHT / 2.0;
+
+        return (bullet.position.x + bulletHalfWidth >= left &&
+                bullet.position.x - bulletHalfWidth <= right &&
+                bullet.position.y + bulletHalfHeight >= top &&
+                bullet.position.y - bulletHalfHeight <= bottom);
+    }
+
+    @Override
+    public String toString() {
+        return "Position{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
     }
 }

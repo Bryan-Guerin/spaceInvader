@@ -3,39 +3,39 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.Rectangle?>
 <StackPane fx:id="root" prefHeight="1080" prefWidth="1920" style="-fx-text-fill: white;"
            xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.bryan.spaceinvader.controller.GameController">
 
-    <BorderPane fx:id="gamePane" style="-fx-background-color: black;">
+    <BorderPane fx:id="gameBorderPane" style="-fx-background-color: black;">
 
         <!-- Zone Gauche : Point de vie et santé -->
         <left>
-            <VBox fx:id="healthPane" alignment="TOP_CENTER" prefWidth="200" maxWidth="200" prefHeight="Infinity"
-                  style="-fx-border-color: white; -fx-border-width: 0 2 0 0;">
+            <VBox fx:id="healthPane" styleClass="sidePane" style="-fx-border-width: 0 2 0 0;">
                 <Region prefHeight="50"/>
-                <Label fx:id="leftLifeLabel" style="-fx-font-size: 24;" text="Points de vie : X" textFill="WHITE"/>
+                <Label fx:id="leftLifeLabel" text="Points de vie : X"/>
                 <Region prefHeight="20"/>
                 <VBox fx:id="healthProgressBar" alignment="BOTTOM_CENTER" prefHeight="800.0" prefWidth="30.0"
                       maxWidth="50.0" style="-fx-border-color: white; -fx-border-radius: 2 2 2 2;">
                     <VBox fx:id="healthBar" prefHeight="800.0" prefWidth="30.0"
                           style="-fx-border-radius: 2 2 2 2; -fx-background-color: red;"/>
                 </VBox>
+                <Region prefHeight="50"/>
+                <Label fx:id="currentHealthLabel" text="3 / 20"/>
             </VBox>
         </left>
 
         <!-- Zone Centre : Canvas du jeu -->
         <center>
-            <!--            Différents menus cachés par défaut, affiché par-dessus le canvas-->
-            <StackPane>
-                <Canvas fx:id="canvas" width="1520"/>
-                <VBox fx:id="shopMenu" alignment="CENTER" prefHeight="500" maxHeight="500" prefWidth="700"
-                      maxWidth="700">
+            <StackPane fx:id="gameStackPane" alignment="TOP_CENTER" maxHeight="1000" maxWidth="1250">
+                <Canvas fx:id="canvas"/>
+                <!--            Différents menus cachés par défaut, affiché par-dessus le canvas-->
+                <VBox fx:id="shopMenu" prefHeight="500" maxHeight="500" prefWidth="700" maxWidth="700">
                     <Region prefHeight="20"/>
                     <VBox alignment="TOP_CENTER">
                         <Label text="Boutique" style="-fx-font-size: 40px; -fx-text-fill: white"/>
-                        <Label text="Dépensez vos points contre des améliorations !" style="-fx-font-size: 20px; -fx-text-fill: white"/>
+                        <Label text="Dépensez vos points contre des améliorations !"
+                               style="-fx-font-size: 20px; -fx-text-fill: white"/>
                     </VBox>
                     <Region prefHeight="40"/>
                     <HBox fx:id="shopLine1" alignment="CENTER" spacing="50">
@@ -43,7 +43,7 @@
                     <HBox fx:id="shopLine2" alignment="CENTER" spacing="50">
                     </HBox>
                     <Region prefHeight="20"/>
-                    <Label fx:id="shopErrorLabel" text="Vous n'avez pas assez de points !" visible="false"
+                    <Label fx:id="shopInfoLabel" text="Vous n'avez pas assez de points !"
                            style="-fx-font-size: 24px; -fx-text-fill: white; -fx-font-weight: BOLD"/>
                     <Region prefHeight="20"/>
                     <HBox alignment="BASELINE_CENTER" spacing="100">
@@ -51,8 +51,7 @@
                         <Button onAction="#onNextLevelButtonClick" text="Niveau Suivant"/>
                     </HBox>
                 </VBox>
-                <VBox fx:id="pauseMenu" alignment="CENTER" prefHeight="300" maxHeight="300" prefWidth="200"
-                      maxWidth="200">
+                <VBox fx:id="pauseMenu" prefHeight="300" maxHeight="300" prefWidth="200" maxWidth="200">
                     <Button onAction="#onPauseButtonClick" text="REPRENDRE"/>
                     <Button onAction="#onSettingsButtonClick" text="OPTION"/>
                     <Button onAction="#onQuitButtonClick" text="QUITTER"/>
@@ -62,14 +61,13 @@
 
         <!-- Zone Droite : Progression (labels + barre verticale) -->
         <right>
-            <VBox fx:id="progressPane" alignment="TOP_CENTER" prefWidth="200" maxWidth="200" prefHeight="Infinity"
-                  style="-fx-border-color: white; -fx-border-width: 0 0 0 2;">
+            <VBox fx:id="progressPane" styleClass="sidePane" style="-fx-border-width: 0 0 0 2;">
 
                 <Region prefHeight="50"/>
                 <!-- Zone haute : Affichage du niveau et du score -->
-                <Label fx:id="currentLevelLabel" style="-fx-font-size: 24;" text="Niveau : X" textFill="WHITE"/>
-                <Rectangle fill="white" height="2" width="200"/>
-                <Label fx:id="scoreLabel" style="-fx-font-size: 24;" text="Score : 0" textFill="WHITE"/>
+                <Label fx:id="currentLevelLabel" text="Niveau : X"/>
+                <Label text="Score :"/>
+                <Label fx:id="scoreLabel" text="0"/>
 
                 <!-- Séparateur (espace entre la partie haute et la barre) -->
                 <Region prefHeight="20"/>
@@ -77,8 +75,7 @@
                 <!-- Zone centrale : Barre de progression verticale  avec une progression verticale -->
                 <VBox fx:id="scoreProgressBar" alignment="BOTTOM_CENTER" prefHeight="800.0" prefWidth="30.0"
                       maxWidth="50.0" style="-fx-border-color: white; -fx-border-radius: 2 2 2 2;">
-                    <VBox fx:id="scoreBar" prefWidth="30.0"
-                          style="-fx-border-radius: 2 2 2 2; -fx-background-color: green;"/>
+                    <VBox fx:id="scoreBar" prefWidth="30.0" style="-fx-background-color: green;"/>
                 </VBox>
             </VBox>
         </right>

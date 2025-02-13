@@ -2,44 +2,43 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane prefHeight="400.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bryan.spaceinvader.controller.SettingsController" style="-fx-background-color: black;">
-    <center>
-        <VBox alignment="CENTER" prefHeight="400" prefWidth="550.0" BorderPane.alignment="CENTER">
-            <Label styleClass="title" text="Settings"/>
-            <HBox styleClass="settingLine">
-                <Label text="Move Left:"/>
-                <Label fx:id="moveLeftLabel" text="Q"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Button fx:id="changeMoveLeftButton" text="Change" onAction="#onChangeMoveLeft"/>
-            </HBox>
-            <HBox styleClass="settingLine">
-                <Label text="Move Right:"/>
-                <Label fx:id="moveRightLabel" text="D"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Button fx:id="changeMoveRightButton" text="Change" onAction="#onChangeMoveRight"/>
-            </HBox>
-            <HBox styleClass="settingLine">
-                <Label text="Shoot:"/>
-                <Label fx:id="shootLabel" text="SPACE"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Button fx:id="changeShootButton" text="Change" onAction="#onChangeShoot"/>
-            </HBox>
-            <HBox styleClass="settingLine">
-                <Label text="Volume:"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Slider fx:id="volumeSlider" cache="true" max="1" blockIncrement="0.1" majorTickUnit="0.25" snapToTicks="true"/>
-            </HBox>
+<VBox prefHeight="400.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bryan.spaceinvader.controller.SettingsController"
+      style="-fx-background-color: black;" alignment="CENTER">
+    <Label styleClass="title" text="Settings"/>
+    <Region fx:id="titleSeparator"/>
+    <HBox styleClass="settingLine">
+        <Label text="Move Left:"/>
+        <Label fx:id="moveLeftLabel" text="Q"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="changeMoveLeftButton" text="Change" onAction="#onChangeMoveLeft"/>
+    </HBox>
+    <HBox styleClass="settingLine">
+        <Label text="Move Right:"/>
+        <Label fx:id="moveRightLabel" text="D"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="changeMoveRightButton" text="Change" onAction="#onChangeMoveRight"/>
+    </HBox>
+    <HBox styleClass="settingLine">
+        <Label text="Shoot:"/>
+        <Label fx:id="shootLabel" text="SPACE"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="changeShootButton" text="Change" onAction="#onChangeShoot"/>
+    </HBox>
+    <HBox styleClass="settingLine">
+        <Label text="Volume:"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Slider fx:id="volumeSlider" cache="true" max="1" blockIncrement="0.1" majorTickUnit="0.25"
+                snapToTicks="true"/>
+    </HBox>
 
-            <HBox styleClass="settingLine">
-                <Label text="Difficulté:"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <ComboBox fx:id="difficultyComboBox" promptText="Choisir la difficulté" onAction="#onChangeDifficulty"/>
-            </HBox>
+    <HBox styleClass="settingLine">
+        <Label text="Difficulté:"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <ComboBox fx:id="difficultyComboBox" promptText="Choisir la difficulté" onAction="#onChangeDifficulty"/>
+    </HBox>
 
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-                <Button onAction="#onSettingsReturnButtonClick" text="RETOUR"/>
-            </HBox>
-        </VBox>
-    </center>
-</BorderPane>
+    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+        <Button onAction="#onSettingsReturnButtonClick" text="RETOUR"/>
+    </HBox>
+</VBox>

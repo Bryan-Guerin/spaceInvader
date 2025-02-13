@@ -1,0 +1,17 @@
+
+
+/* style de menu view */
+
+#title {
+    -fx-font-family: 'Press Start 2P', cursive;
+    -fx-text-fill: white;
+    -fx-font-size: 50px;
+}
+
+#titleSeparator {
+    -fx-pref-height: 100;
+}
+
+#bottomSeparator {
+    -fx-pref-height: 100;
+}

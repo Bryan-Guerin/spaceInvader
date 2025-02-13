@@ -26,9 +26,10 @@ public class InitApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Scene scene = new Scene(ResourceManager.loadResource("menu-view.fxml", FXMLLoader.class, ResourceType.FXML).load(), 1920, 1080);
+        Scene scene = new Scene(ResourceManager.loadResource("menu-view.fxml", FXMLLoader.class, ResourceType.FXML).load());
         stage.getIcons().add(ResourceManager.loadResource("logo.png", Image.class, ResourceType.IMAGE));
         scene.getStylesheets().add(ResourceManager.computeFullPath("style.css", ResourceType.CSS).toExternalForm());
+        scene.getStylesheets().add(ResourceManager.computeFullPath("menu.css", ResourceType.CSS).toExternalForm());
         Font.loadFont(ResourceManager.computeFullPath("PressStart2P-Regular.ttf", ResourceType.FONT).toExternalForm(), 20);
         stage.setTitle("Space Invaders");
         stage.setMaximized(true);

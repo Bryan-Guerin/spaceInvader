@@ -6,6 +6,8 @@ import com.bryan.spaceinvader.model.game.Position;
 import com.bryan.spaceinvader.model.game.Vector;
 import com.bryan.spaceinvader.model.ressource.manager.ResourceManager;
 import com.bryan.spaceinvader.model.ressource.manager.ResourceType;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -13,26 +15,28 @@ import javafx.scene.media.MediaPlayer;
 import java.util.HashMap;
 
 public class Player {
-    public static final int WIDTH = 45;
+    public static final int SIZE = 45; // It's a square
     private static final Settings settings = Settings.getInstance();
 
     private final MediaPlayer shootMediaPlayer = new MediaPlayer(ResourceManager.loadResource("shoot.wav", Media.class, ResourceType.AUDIO));
     private final MediaPlayer explosionMediaPlayer = new MediaPlayer(ResourceManager.loadResource("explosion.wav", Media.class, ResourceType.AUDIO));
     private final HashMap<AttributeType, Attribute> attributes = new HashMap<>();
-    private final int POSITION_Y = 900;
+    private final int POSITION_Y;
     private final int POSITION_X;
     private final VBox healthBar;
 
     private VesselType vesselType = VesselType.V0;
     public Position position;
     private double health;
+    private final StringProperty propertyHealth = new SimpleStringProperty();
 
-    public Player(int x, VBox healthBar) {
+    public Player(int x, int y, VBox healthBar) {
         POSITION_X = x;
+        POSITION_Y = y;
         this.position = new Position(x, POSITION_Y);
         this.healthBar = healthBar;
         initAttributes();
-        health = attributes.get(AttributeType.MAX_HEALTH).getValue();
+        heal(attributes.get(AttributeType.MAX_HEALTH).getValue());
     }
 
     private void initAttributes() {
@@ -89,8 +93,8 @@ public class Player {
     public void heal(double amount) {
         health += amount;
         if (health > getAttributeValue(AttributeType.MAX_HEALTH))
-            health = getAttributeValue(AttributeType.MAX_HEALTH);
-        updateHealthBar((double) health / getAttributeValue(AttributeType.MAX_HEALTH));
+            health = (int) getAttributeValue(AttributeType.MAX_HEALTH);
+        updateHealthBar(health / getAttributeValue(AttributeType.MAX_HEALTH));
     }
 
     public void takeDamage(double damage) {
@@ -100,7 +104,7 @@ public class Player {
         explosionMediaPlayer.play();
         if (health < 0)
             health = 0;
-        updateHealthBar((double) health / getAttributeValue(AttributeType.MAX_HEALTH));
+        updateHealthBar(health / getAttributeValue(AttributeType.MAX_HEALTH));
     }
 
     public boolean isDead() {
@@ -124,6 +128,11 @@ public class Player {
      */
     public void updateHealthBar(double healthPercentage) {
         healthBar.setPrefHeight(healthBar.getMaxHeight() * healthPercentage);
+        propertyHealth.setValue((int) this.health + " / " + (int) getAttributeValue(AttributeType.MAX_HEALTH));
+    }
+
+    public StringProperty healthProperty() {
+        return propertyHealth;
     }
 
     public void handleUpgrade(Upgrade upgrade) {

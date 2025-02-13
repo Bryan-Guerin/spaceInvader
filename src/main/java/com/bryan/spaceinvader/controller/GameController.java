@@ -21,13 +21,15 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static java.lang.Math.min;
+
 public class GameController extends BasicController implements Initializable {
 
     private static final Settings settings = Settings.getInstance();
 
     @FXML
     public StackPane root;
-    public BorderPane gamePane;
+    public BorderPane gameBorderPane;
     public Canvas canvas;
     public VBox progressPane;
     public Label scoreLabel;
@@ -42,19 +44,16 @@ public class GameController extends BasicController implements Initializable {
     public VBox scoreBar;
     public VBox healthProgressBar;
     public VBox healthBar;
-    public Label shopErrorLabel;
+    public Label shopInfoLabel;
+    public Label currentHealthLabel;
+    public StackPane gameStackPane;
 
     private Game game;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        stage.setHeight(1080);
-        stage.setWidth(1920);
         stage.setFullScreenExitHint("");
         stage.setFullScreenExitKeyCombination(null);
-        game = new Game(canvas, scoreBar, healthBar, shopMenu, pauseMenu);
-
-        initBinds();
         initShop();
 
         pauseMenu.setVisible(false);
@@ -82,13 +81,24 @@ public class GameController extends BasicController implements Initializable {
         };
 
         Platform.runLater(() -> {
+            canvas.setWidth(this.gameBorderPane.getWidth() - healthPane.getWidth() - progressPane.getWidth());
+            canvas.setHeight(min(this.gameBorderPane.getHeight(), 1000));
+            game = new Game(canvas, scoreBar, healthBar, shopMenu, pauseMenu);
+
+            initBinds();
             stage.getScene().setOnKeyPressed(game::keyPressed);
             stage.getScene().setOnKeyReleased(game::keyReleased);
+
+            stage.setMaximized(false);
+            stage.setMaximized(true);
+
+            gameStackPane.layout();
             timer.start();
         });
     }
 
     private void initShop() {
+        shopInfoLabel.setText("");
         for (ShopItemType itemType : ShopItemType.values()) {
             ShopItemNode shopItemNode = new ShopItemNode(new ShopItem(itemType));
             shopItemNode.setOnMouseClicked(this::onShopButtonClick);
@@ -104,15 +114,14 @@ public class GameController extends BasicController implements Initializable {
         ShopItemNode itemNode = (ShopItemNode) event.getSource();
 
         if (itemNode.getShopItem().isLocked()) {
-            shopErrorLabel.setVisible(true);
 //            shopErrorLabel.setText("Vous devez atteindre le niveau " + itemNode.getShopItem().getType().getUnlockLevel() + " !"); // TODO évoluer la limite de niveau ?
-            shopErrorLabel.setText("Niveau maximum atteint !");
+            shopInfoLabel.setText("Niveau maximum atteint !");
         } else {
             if (game.getProgress().getScore() < itemNode.getShopItem().getCost()) {
-                shopErrorLabel.setVisible(true);
-                shopErrorLabel.setText("Vous n'avez pas assez de points !"); // TODO message custom ?
+                shopInfoLabel.setText("Vous n'avez pas assez de points !");
             } else {
-                shopErrorLabel.setVisible(false);
+                shopInfoLabel.setText("Vous avez amélioré " + itemNode.getShopItem().getType() + " au niveau "
+                        + itemNode.getShopItem().getCurrentLevel() + " / " + itemNode.getShopItem().getType().getMaxLevel() + " !");
                 game.getProgress().spendScore(itemNode.getShopItem().getCost());
                 game.getPlayer().handleUpgrade(itemNode.handlePurchase());
                 shopMenu.requestLayout();
@@ -136,6 +145,7 @@ public class GameController extends BasicController implements Initializable {
         scoreLabel.textProperty().bind(game.getProgress().scoreProperty());
         currentLevelLabel.textProperty().bind(game.getProgress().currentLevelProperty());
         leftLifeLabel.textProperty().bind(game.getProgress().livesProperty());
+        currentHealthLabel.textProperty().bind(game.getPlayer().healthProperty());
     }
 
     public void onSaveButtonClick(ActionEvent actionEvent) {

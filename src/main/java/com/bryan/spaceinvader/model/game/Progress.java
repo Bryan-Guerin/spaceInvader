@@ -44,7 +44,7 @@ public class Progress {
 
     private void setScore(int i) {
         this.score = i;
-        propertyScore.set("Score : " + this.score);
+        propertyScore.set(String.valueOf(this.score));
     }
 
     public void loseLife() {
@@ -53,7 +53,7 @@ public class Progress {
 
     private void setLives(int lives) {
         this.lives = lives;
-        propertyLives.set("Vies restantes : " + this.lives);
+        propertyLives.set("Vies : " + this.lives);
     }
 
     public void nextLevel() {

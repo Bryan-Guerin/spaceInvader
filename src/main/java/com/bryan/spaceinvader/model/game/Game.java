@@ -9,13 +9,11 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -32,9 +30,20 @@ public class Game {
     private final Progress progress;
     private final VBox shopMenu;
     private final VBox pauseMenu;
-    private boolean isPaused = false;
+    private boolean paused = false;
+    private boolean debug = false;
 
-    private record Rect(int leftGap, int topGap, int x, int y, int width, int height) {
+    private record Rect(int leftGap, int topGap, int xGap, int yGap) {
+        public HashMap<Direction, Integer> getDimensions(GameConfig gameConfig) {
+            HashMap<Direction, Integer> dimensions = new HashMap<>(2);
+            dimensions.put(Direction.HEIGHT, yGap * gameConfig.getNumberOfRows());
+            dimensions.put(Direction.WIDTH, xGap * gameConfig.getNumberOfColumns());
+            return dimensions;
+        }
+
+        public enum Direction {
+            HEIGHT, WIDTH
+        }
     }
 
     private boolean isShooting, isMovingLeft, isMovingRight;
@@ -47,18 +56,17 @@ public class Game {
 
     private ArrayList<ArrayList<AbsInvader>> waves;
     private final ArrayList<InvaderShooter> shooters = new ArrayList<>();
-    private List<Bullet> invaderBullets = Collections.synchronizedList(new ArrayList<>());
-    private List<Bullet> playerBullets = Collections.synchronizedList(new ArrayList<>());
+    private final List<Bullet> invaderBullets = Collections.synchronizedList(new ArrayList<>());
+    private final List<Bullet> playerBullets = Collections.synchronizedList(new ArrayList<>());
 
     public Game(Canvas canvas, VBox scoreBar, VBox healthBar, VBox shopMenu, VBox pauseMenu) {
         this.canvas = canvas;
         this.shopMenu = shopMenu;
         this.pauseMenu = pauseMenu;
-        canvas.setWidth(1420);
-        canvas.setHeight(1080);
-        this.player = new Player((int) (canvas.getWidth() / 2), healthBar);
         gameConfig = GameConfig.getGameConfig(settings.getDifficulty());
-        rect = new Rect((int) ((canvas.getWidth() - gameConfig.getNumberOfColumns() * (90) + 45) / 2), 50, 90, 60, 45, 45);
+        rect = new Rect((int) ((canvas.getWidth() - gameConfig.getNumberOfColumns() * 90 + 45) / 2), 50, 90, 60);
+
+        this.player = new Player((int) (canvas.getWidth() / 2), (int) (canvas.getHeight() - rect.yGap), healthBar);
         progress = new Progress(scoreBar);
         generateWaves(0);
         handlePlayerShooting();
@@ -136,11 +144,11 @@ public class Game {
                 if (isNull(type))
                     continue;
                 if (type.isShooter()) {
-                    InvaderShooter invader = new InvaderShooter(new Position(rect.leftGap + rect.x * j, rect.topGap + rect.y * i), type);
+                    InvaderShooter invader = new InvaderShooter(new Position(rect.leftGap + rect.xGap * j, rect.topGap + rect.yGap * i), type);
                     shooters.add(invader);
                     line.add(invader);
                 } else {
-                    line.add(new Invader(new Position(rect.leftGap + rect.x * j, rect.topGap + rect.y * i), type));
+                    line.add(new Invader(new Position(rect.leftGap + rect.xGap * j, rect.topGap + rect.yGap * i), type));
                 }
                 totalInvaders++;
             }
@@ -185,7 +193,7 @@ public class Game {
     private void computeProgress() {
         if (player.isDead()) {
             progress.loseLife();
-            isPaused = true;
+            paused = true;
             //TODO faire la fin de jeu propre (recommencer niveau et perdre une vie. Ou perdre (sauvegarde score etc ...)
             logger.info("Life lost. Restarting level {}.", progress.getCurrentLevel());
             restartLevel();
@@ -205,8 +213,8 @@ public class Game {
         if (player.position.x < 0)
             player.position.x = 0;
 
-        if (player.position.x > canvas.getWidth() - Player.WIDTH)
-            player.position.x = (int) (canvas.getWidth() - Player.WIDTH);
+        if (player.position.x > canvas.getWidth() - Player.SIZE)
+            player.position.x = (int) (canvas.getWidth() - Player.SIZE);
 
         // Bullets out of canvas
         playerBullets.removeIf(bullet -> bullet.position.y < 0);
@@ -220,7 +228,7 @@ public class Game {
                     for (int j = 0; j < wave.size(); j++) {
                         if (k > playerBullets.size() - 1)
                             break;
-                        if (nonNull(wave.get(j)) && wave.get(j).position.isInRange(playerBullets.get(k).position, rect.width)) {
+                        if (nonNull(wave.get(j)) && wave.get(j).position.isInSquarePerimeter(playerBullets.get(k), AbsInvader.SIZE)) {
                             if (wave.get(j).takeDamage(playerBullets.get(k).damage)) { // If the invader is killed
                                 progress.recordKill(wave.get(j).getType().getScore());
                                 int finalI = j;
@@ -238,7 +246,7 @@ public class Game {
 
         // Invaders bullets hits player
         for (int i = 0; i < invaderBullets.size(); i++) {
-            if (player.position.isInRange(invaderBullets.get(i).position, Player.WIDTH)) {
+            if (player.position.isInSquarePerimeter(invaderBullets.get(i), Player.SIZE)) {
                 player.takeDamage(invaderBullets.get(i).damage);
                 invaderBullets.set(i, null);
             }
@@ -258,7 +266,7 @@ public class Game {
 
     private void renderBullets() {
         Image bulletImage = ResourceManager.loadResource(
-                Bullet.PlAYER_BULLET_TEXTURE,
+                Bullet.PLAYER_BULLET_TEXTURE,
                 Image.class, ResourceType.IMAGE);
 
         for (Bullet bullet : playerBullets) {
@@ -277,7 +285,7 @@ public class Game {
     private void drawBullet(Image bulletImage, Bullet bullet) {
         canvas.getGraphicsContext2D().drawImage(
                 bulletImage,
-                bullet.position.x,
+                bullet.position.x + 20, // Offset equivalent to Player.WIDTH / 2 - bulletImage.getWidth() / 2. Same for invaders
                 bullet.position.y);
     }
 
@@ -291,6 +299,14 @@ public class Game {
     }
 
     private void drawInvader(AbsInvader invader) {
+        if (debug) {
+            canvas.getGraphicsContext2D().setFill(Color.RED);
+            canvas.getGraphicsContext2D()
+                    .fillRect(
+                            invader.position.x,
+                            invader.position.y,
+                            AbsInvader.SIZE, AbsInvader.SIZE);
+        }
         canvas.getGraphicsContext2D().drawImage(
                 ResourceManager.loadResource(
                         invader.type.getTextureName(),
@@ -310,7 +326,7 @@ public class Game {
 
     public void play() {
         //  TODO la fin de partie
-        if (!isPaused) {
+        if (!paused) {
             handleInputs();
             invaderShoot();
             bulletMove();
@@ -322,7 +338,7 @@ public class Game {
 
     private void endCurrentLevel() {
         resetKeyEvents();
-        isPaused = true;
+        paused = true;
         clearBullets();
         progress.nextLevel();
         player.softReset();
@@ -332,23 +348,23 @@ public class Game {
     public void startNextLevel() {
         generateWaves(progress.getCurrentLevel());
         pauseMenu.setVisible(false);
-        isPaused = false;
+        paused = false;
     }
 
     private void restartLevel() {
         clearBullets();
         generateWaves(progress.getCurrentLevel());
         player.softReset();
-        isPaused = false;
+        paused = false;
     }
 
     public void handlePauseResume() {
         resetKeyEvents();
-        if (isPaused) {
-            isPaused = false;
+        if (paused) {
+            paused = false;
             pauseMenu.setVisible(false);
         } else {
-            isPaused = true;
+            paused = true;
             pauseMenu.setVisible(true);
         }
     }

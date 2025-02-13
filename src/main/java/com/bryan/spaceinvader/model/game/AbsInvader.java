@@ -1,6 +1,8 @@
 package com.bryan.spaceinvader.model.game;
 
 public abstract class AbsInvader {
+    public static final int SIZE = 45; // It's a square
+
     public Position position;
     public double health;
     public InvaderType type;

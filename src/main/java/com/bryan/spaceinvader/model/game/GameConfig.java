@@ -18,8 +18,8 @@ public class GameConfig {
     public static GameConfig getGameConfig(Settings.Difficulty difficulty) {
         return switch (difficulty) {
             case EASY -> new GameConfig(8, 10, 2, 0.0005);
-            case NORMAL -> new GameConfig(9, 13, 3, 0.001);
-            case HARD -> new GameConfig(10, 16, 3, 0.00015);
+            case NORMAL -> new GameConfig(9, 12, 3, 0.001);
+            case HARD -> new GameConfig(10, 13, 3, 0.00015);
             default -> new GameConfig(5, 8, 1, 0);
         };
     }
