@@ -131,7 +131,6 @@ public class GameController extends BasicController implements Initializable {
     }
 
     private void initBinds() {
-
         double scoreProgressBarHeight = 800;
         double healthProgressBarHeight = 800;
 
