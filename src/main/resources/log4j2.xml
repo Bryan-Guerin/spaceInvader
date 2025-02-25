@@ -16,9 +16,9 @@
         </File>
     </Appenders>
     <Loggers>
-        <Root level="DEBUG">
+        <Root>
             <AppenderRef ref="CONSOLE" level="DEBUG"/>
-            <AppenderRef ref="MAIN"/>
+            <AppenderRef ref="MAIN" level="INFO"/>
         </Root>
         <Logger name="com.bryan.spaceinvader" level="DEBUG">
             <AppenderRef ref="DEBUG_LOG"/>
