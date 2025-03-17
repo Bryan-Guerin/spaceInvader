@@ -1,3 +1,11 @@
+/* CONSTANTS */
+
+* {
+    -primary-color: rgb(5, 137, 5);
+    -hover-color: rgb(6, 130, 6);
+    -pressed-color: rgb(6, 110, 6);
+    -text-color: white;
+}
 
 /* GLOBAL */
 
@@ -7,20 +15,20 @@
     -fx-font-size: 15px;
     -fx-cursor: hand;
     -fx-alignment: center;
-    -fx-text-fill: white;
-    -fx-background-color: rgb(5, 137, 5);
+    -fx-text-fill: -text-color;
+    -fx-background-color: -primary-color;
     -fx-background-radius: 15;
     -fx-effect: dropshadow(gaussian, rgba(153, 153, 153, 0.9), 5, 0, 0, 0);
     -fx-margin: 10 0 10 0;
 }
 
 .button:hover {
-    -fx-background-color: rgb(6, 130, 6);
+    -fx-background-color: -hover-color;
     -fx-effect: dropshadow(gaussian, rgba(102, 102, 102, 0.9), 5, 0, 0, 0);
 }
 
 .button:pressed {
-    -fx-background-color: rgb(6, 110, 6);
+    -fx-background-color: -pressed-color;
     -fx-effect: dropshadow(gaussian, rgba(102, 102, 102, 0.9), 1, 0, 0, 0);
     -fx-translateY: 6;
 }
@@ -29,20 +37,20 @@
     -fx-font-family: 'Press Start 2P', cursive;
     -fx-font-size: 15px;
     -fx-cursor: hand;
-    -fx-background-color: rgb(5, 137, 5);
+    -fx-background-color: -primary-color;
     -fx-background-radius: 15;
-    -fx-text-fill: white;
+    -fx-text-fill: -text-color;
     -fx-padding: 7 25 7 10;
 }
 
 .combo-box .arrow-button {
-    -fx-background-color: rgb(5, 137, 5);
+    -fx-background-color: -primary-color;
     -fx-padding: 5;
     -fx-shape: "M0,0 L10,5 L0,10 Z";
     -fx-scaleShape: true;
     -fx-scaleX: 1.5;
     -fx-scaleY: 1.5;
-    -fx-text-fill: white;
+    -fx-text-fill: -text-color;
 }
 
 .combo-box .list-view {
@@ -52,19 +60,56 @@
 
 .combo-box .list-cell {
     -fx-padding: 10 25;
-    -fx-background-color: rgb(5, 137, 5);
-    -fx-text-fill: white;
+    -fx-background-color: -primary-color;
+    -fx-text-fill: -text-color;
 }
 
 .combo-box .list-cell:hover {
-    -fx-background-color: rgb(6, 130, 6);
+    -fx-background-color: -hover-color;
 }
 
 .combo-box .list-cell:pressed {
-    -fx-background-color: rgb(6, 110, 6);
+    -fx-background-color: -pressed-color;
 }
 
 .combo-box .label {
     -fx-padding: 0 0 0 10;
     -fx-alignment: CENTER_LEFT;
+}
+
+
+.check-box {
+    -fx-font-family: 'Press Start 2P', cursive;
+    -fx-font-size: 15px;
+    -fx-text-fill: -text-color;
+    -fx-background-radius: 15;
+    -fx-background-color: -primary-color;
+    -fx-padding: 5;
+}
+
+.check-box .box {
+    -fx-background-color: rgba(5, 137, 5, 0);
+    -fx-border-width: 0;
+    -fx-padding: 10;
+}
+
+.check-box:hover {
+    -fx-background-color: -hover-color;
+}
+
+.check-box:pressed {
+    -fx-background-color: -pressed-color;
+}
+
+.check-box .mark {
+    -fx-background-color: transparent; /* Transparent background when not checked */
+    -fx-scaleShape: true;
+    -fx-stroke: white;
+    -fx-stroke-width: 5;
+    -fx-stroke-line-cap: round;
+    -fx-stroke-line-join: round;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white; /* White background when checked */
 }

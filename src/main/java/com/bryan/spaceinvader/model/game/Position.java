@@ -8,7 +8,7 @@ public class Position {
         this.y = y;
     }
 
-    private Position(double x, double y) {
+    public Position(double x, double y) {
         this.x = x;
         this.y = y;
     }
@@ -26,18 +26,17 @@ public class Position {
         return p.x == x && p.y == y;
     }
 
+    /**
+     * The given position is the upper left corner of the square.
+     * Check if the bullet is in the square of side a
+     *
+     * @param bullet bullet to check
+     * @param a      side of the square
+     * @return true if the bullet is in the square
+     */
     public boolean isInSquarePerimeter(Bullet bullet, int a) {
-        double left = x - a / 2.0;
-        double right = x + a / 2.0;
-        double top = y - a / 2.0;
-        double bottom = y + a / 2.0;
-        double bulletHalfWidth = Bullet.WIDTH / 2.0;
-        double bulletHalfHeight = Bullet.HEIGHT / 2.0;
-
-        return (bullet.position.x + bulletHalfWidth >= left &&
-                bullet.position.x - bulletHalfWidth <= right &&
-                bullet.position.y + bulletHalfHeight >= top &&
-                bullet.position.y - bulletHalfHeight <= bottom);
+        return bullet.position.y < y + a && bullet.position.y + Bullet.HEIGHT > y
+                && bullet.position.x + Bullet.WIDTH > x && (bullet.position.x < x + a);
     }
 
     @Override
@@ -46,5 +45,11 @@ public class Position {
                 "x=" + x +
                 ", y=" + y +
                 '}';
+    }
+
+    public Position offset(double x, double y) {
+        this.x += x;
+        this.y += y;
+        return this;
     }
 }

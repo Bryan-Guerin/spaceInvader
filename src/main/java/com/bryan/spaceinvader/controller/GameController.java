@@ -1,6 +1,7 @@
 package com.bryan.spaceinvader.controller;
 
 import com.bryan.spaceinvader.model.Settings;
+import com.bryan.spaceinvader.model.game.AbsInvader;
 import com.bryan.spaceinvader.model.game.Game;
 import com.bryan.spaceinvader.model.shop.ShopItem;
 import com.bryan.spaceinvader.model.shop.ShopItemNode;
@@ -17,14 +18,17 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static java.lang.Math.min;
+import static java.lang.Math.max;
 
 public class GameController extends BasicController implements Initializable {
 
+    private final static Logger logger = LogManager.getLogger(GameController.class);
     private static final Settings settings = Settings.getInstance();
 
     @FXML
@@ -40,9 +44,9 @@ public class GameController extends BasicController implements Initializable {
     public HBox shopLine1;
     public HBox shopLine2;
     public VBox pauseMenu;
-    public VBox scoreProgressBar;
+    public VBox scoreBarContainer;
     public VBox scoreBar;
-    public VBox healthProgressBar;
+    public VBox healthBarContainer;
     public VBox healthBar;
     public Label shopInfoLabel;
     public Label currentHealthLabel;
@@ -52,8 +56,6 @@ public class GameController extends BasicController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        stage.setFullScreenExitHint("");
-        stage.setFullScreenExitKeyCombination(null);
         initShop();
 
         pauseMenu.setVisible(false);
@@ -72,6 +74,7 @@ public class GameController extends BasicController implements Initializable {
                         Thread.sleep((long) (settings.getPeriod() - deltaTime));
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
+                        logger.trace("Game loop interrupted");
                     }
                 }
 
@@ -81,16 +84,20 @@ public class GameController extends BasicController implements Initializable {
         };
 
         Platform.runLater(() -> {
-            canvas.setWidth(this.gameBorderPane.getWidth() - healthPane.getWidth() - progressPane.getWidth());
-            canvas.setHeight(min(this.gameBorderPane.getHeight(), 1000));
+            healthPane.setPrefWidth(max(progressPane.getWidth(), healthPane.getMaxWidth())); // Only for symmetry purposes
+            progressPane.setPrefWidth(max(healthPane.getWidth(), progressPane.getMaxWidth()));
+
+            canvas.setWidth(stage.getWidth() - 2 * healthPane.getWidth());
+            canvas.setHeight(stage.getHeight());
+
+
+
+            AbsInvader.computeInvaderSize(stage.getWidth());
             game = new Game(canvas, scoreBar, healthBar, shopMenu, pauseMenu);
 
             initBinds();
             stage.getScene().setOnKeyPressed(game::keyPressed);
             stage.getScene().setOnKeyReleased(game::keyReleased);
-
-            stage.setMaximized(false);
-            stage.setMaximized(true);
 
             gameStackPane.layout();
             timer.start();
@@ -110,6 +117,10 @@ public class GameController extends BasicController implements Initializable {
         }
     }
 
+    // TODO Shop : Lorsque achat, le niveau commence à 0 (et pas 1) donc 9 / 10 est max.
+    //  Vider le message d'erreur entre 2 ouvertures de shop
+    //  Ajouter indication visuel lorsque level max atteint
+    //  Ajouter animation lors de l'achat et un cd pour éviter le multi click (10 ms ?)
     public void onShopButtonClick(MouseEvent event) {
         ShopItemNode itemNode = (ShopItemNode) event.getSource();
 
@@ -131,15 +142,15 @@ public class GameController extends BasicController implements Initializable {
     }
 
     private void initBinds() {
-        double scoreProgressBarHeight = 800;
-        double healthProgressBarHeight = 800;
+        double scoreBarHeight = scoreBarContainer.getHeight();
+        double healthBarHeight = healthBarContainer.getHeight();
 
-        scoreBar.setMaxHeight(scoreProgressBarHeight);
+        scoreBar.setMaxHeight(scoreBarHeight);
         scoreBar.setPrefHeight(0);
-        scoreBar.setPrefWidth(scoreProgressBar.getWidth());
-        healthBar.setMaxHeight(healthProgressBarHeight);
-        healthBar.setPrefHeight(healthProgressBarHeight);
-        healthBar.setPrefWidth(healthProgressBar.getWidth());
+        scoreBar.setPrefWidth(scoreBarContainer.getWidth());
+        healthBar.setMaxHeight(healthBarHeight);
+        healthBar.setPrefHeight(healthBarHeight);
+        healthBar.setPrefWidth(healthBarContainer.getWidth());
 
         scoreLabel.textProperty().bind(game.getProgress().scoreProperty());
         currentLevelLabel.textProperty().bind(game.getProgress().currentLevelProperty());
@@ -166,6 +177,6 @@ public class GameController extends BasicController implements Initializable {
     }
 
     public void onQuitButtonClick(ActionEvent actionEvent) {
-
+        System.exit(0);
     }
 }

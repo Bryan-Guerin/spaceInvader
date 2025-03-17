@@ -3,9 +3,8 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<StackPane fx:id="root" prefHeight="1080" prefWidth="1920" style="-fx-text-fill: white;"
-           xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="com.bryan.spaceinvader.controller.GameController">
+<StackPane fx:id="root" fx:controller="com.bryan.spaceinvader.controller.GameController"
+           xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
 
     <BorderPane fx:id="gameBorderPane" style="-fx-background-color: black;">
 
@@ -15,7 +14,7 @@
                 <Region prefHeight="50"/>
                 <Label fx:id="leftLifeLabel" text="Points de vie : X"/>
                 <Region prefHeight="20"/>
-                <VBox fx:id="healthProgressBar" alignment="BOTTOM_CENTER" prefHeight="800.0" prefWidth="30.0"
+                <VBox fx:id="healthBarContainer" alignment="BOTTOM_CENTER" prefHeight="800.0" prefWidth="30.0"
                       maxWidth="50.0" style="-fx-border-color: white; -fx-border-radius: 2 2 2 2;">
                     <VBox fx:id="healthBar" prefHeight="800.0" prefWidth="30.0"
                           style="-fx-border-radius: 2 2 2 2; -fx-background-color: red;"/>
@@ -27,9 +26,9 @@
 
         <!-- Zone Centre : Canvas du jeu -->
         <center>
-            <StackPane fx:id="gameStackPane" alignment="TOP_CENTER" maxHeight="1000" maxWidth="1250">
+            <StackPane fx:id="gameStackPane" maxHeight="1000" maxWidth="1250">
                 <Canvas fx:id="canvas"/>
-                <!--            Différents menus cachés par défaut, affiché par-dessus le canvas-->
+                <!--  Différents menus cachés par défaut, affiché par-dessus le canvas-->
                 <VBox fx:id="shopMenu" prefHeight="500" maxHeight="500" prefWidth="700" maxWidth="700">
                     <Region prefHeight="20"/>
                     <VBox alignment="TOP_CENTER">
@@ -73,7 +72,7 @@
                 <Region prefHeight="20"/>
 
                 <!-- Zone centrale : Barre de progression verticale  avec une progression verticale -->
-                <VBox fx:id="scoreProgressBar" alignment="BOTTOM_CENTER" prefHeight="800.0" prefWidth="30.0"
+                <VBox fx:id="scoreBarContainer" alignment="BOTTOM_CENTER" prefHeight="800.0" prefWidth="30.0"
                       maxWidth="50.0" style="-fx-border-color: white; -fx-border-radius: 2 2 2 2;">
                     <VBox fx:id="scoreBar" prefWidth="30.0" style="-fx-background-color: green;"/>
                 </VBox>

@@ -1,22 +1,25 @@
 package com.bryan.spaceinvader;
 
 import com.bryan.spaceinvader.controller.BasicController;
+import com.bryan.spaceinvader.model.Settings;
 import com.bryan.spaceinvader.model.game.Game;
 import com.bryan.spaceinvader.model.ressource.manager.ResourceManager;
 import com.bryan.spaceinvader.model.ressource.manager.ResourceType;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+import javafx.stage.StageStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,19 +45,16 @@ public class InitApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent windowEvent) {
-                Game.stopPlayerShootingThread();
-                if (nonNull(lock)) {
-                    try {
-                        lock.release();
-                    } catch (IOException ignored) {
-                    }
+        stage.setOnCloseRequest(_ -> {
+            Game.stopPlayerShootingThread();
+            if (nonNull(lock)) {
+                try {
+                    lock.release();
+                } catch (IOException ignored) {
                 }
-                Platform.exit();
-                System.exit(0);
             }
+            Platform.exit();
+            System.exit(0);
         });
 
         if (!createFileLock()) {
@@ -66,16 +66,35 @@ public class InitApplication extends Application {
     }
 
     private void initApplicationStage(Stage stage) throws IOException {
-        Scene scene = new Scene(ResourceManager.loadResource("menu-view.fxml", FXMLLoader.class, ResourceType.FXML).load());
-        stage.getIcons().add(ResourceManager.loadResource("logo.png", Image.class, ResourceType.IMAGE));
-        scene.getStylesheets().add(ResourceManager.computeFullPath("style.css", ResourceType.CSS).toExternalForm());
-        scene.getStylesheets().add(ResourceManager.computeFullPath("menu.css", ResourceType.CSS).toExternalForm());
-        Font.loadFont(ResourceManager.computeFullPath("PressStart2P-Regular.ttf", ResourceType.FONT).toExternalForm(), 20);
+        Settings settings = Settings.getInstance();
+        stage.initStyle(StageStyle.DECORATED);
         stage.setTitle("Space Invaders");
-        stage.setMaximized(true);
-        stage.setScene(scene);
+        stage.getIcons().add(ResourceManager.loadResource("logo.png", Image.class, ResourceType.IMAGE));
+        stage.setFullScreen(settings.isFullScreen());
+        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+        stage.setFullScreenExitHint("");
+
+        stage.setWidth(settings.getResolution().getWidth());
+        stage.setHeight(settings.getResolution().getHeight());
+        stage.centerOnScreen();
+
+        StackPane sceneContainer = new StackPane();
+        AnchorPane anchorPane = new AnchorPane();
+        anchorPane.getChildren().add(sceneContainer);
+        AnchorPane.setTopAnchor(sceneContainer, 0.0D);
+        AnchorPane.setRightAnchor(sceneContainer, 0.0D);
+        AnchorPane.setBottomAnchor(sceneContainer, 0.0D);
+        AnchorPane.setLeftAnchor(sceneContainer, 0.0D);
+
+        sceneContainer.getChildren().add(ResourceManager.loadResource("menu-view.fxml", FXMLLoader.class, ResourceType.FXML).load());
+        sceneContainer.getStylesheets().add(ResourceManager.computeFullPath("style.css", ResourceType.CSS).toExternalForm());
+        sceneContainer.getStylesheets().add(ResourceManager.computeFullPath("menu.css", ResourceType.CSS).toExternalForm());
+        Font.loadFont(ResourceManager.computeFullPath("PressStart2P-Regular.ttf", ResourceType.FONT).toExternalForm(), 20);
+
+        stage.setScene(new Scene(anchorPane));
         stage.show();
         BasicController.setStage(stage);
+        BasicController.setSceneContainer(sceneContainer);
         logger.info("Application started");
     }
 
@@ -85,7 +104,7 @@ public class InitApplication extends Application {
         label.setStyle("-fx-font-size: 14px; -fx-padding: 20 0;");
         Button btn = new Button();
         btn.setText("OK");
-        btn.setOnAction(e -> stage.close());
+        btn.setOnAction(_ -> stage.close());
 
         VBox root = new VBox();
         root.setAlignment(Pos.CENTER);

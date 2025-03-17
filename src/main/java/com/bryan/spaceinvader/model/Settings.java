@@ -39,16 +39,14 @@ public class Settings implements Serializable {
     private final HashMap<GameAction, KeyBind> keyBindings = new HashMap<>();
 
     private double volume;
-    private double frequency; // TODO fixer à 60 et retirer le custom
     private Difficulty difficulty;
-
-    @JsonIgnore
-    private transient double period;
+    @JsonProperty(value = "fullScreen")
+    private Boolean fullscreen;
+    private Resolution resolution;
 
     private Settings() {
     }
 
-    // Chargement des réglages depuis un fichier JSON
     private static Settings loadSettings() {
         File file = filePath.toFile();
         ObjectMapper mapper = new ObjectMapper();
@@ -69,7 +67,6 @@ public class Settings implements Serializable {
         return settings;
     }
 
-    // Méthode pour sauvegarder les réglages dans un fichier JSON
     public void save() {
         if (logger.isDebugEnabled())
             logger.debug("Saving settings");
@@ -79,7 +76,7 @@ public class Settings implements Serializable {
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
         try {
-            file.getParentFile().mkdirs(); // Crée les dossiers si nécessaire
+            file.getParentFile().mkdirs();
             mapper.writeValue(file, this);
         } catch (Exception e) {
             logger.error("Error while saving settings: {}", filePath, e);
@@ -89,10 +86,23 @@ public class Settings implements Serializable {
             logger.info("Settings saved successfully to file: {}", filePath);
     }
 
-    // Gestion des KeyBindings
+    private void getDefault() {
+        getDefaultKeyBinds();
+        fullscreen = true;
+        difficulty = Difficulty.NORMAL;
+        volume = DEFAULT_VOLUME;
+        resolution = Resolution.R1920x1080;
+    }
+
+    private void getDefaultKeyBinds() {
+        keyBindings.put(GameAction.MOVE_LEFT, new KeyBind(KeyCode.Q));
+        keyBindings.put(GameAction.MOVE_RIGHT, new KeyBind(KeyCode.D));
+        keyBindings.put(GameAction.SHOOT, new KeyBind(KeyCode.SPACE));
+    }
+
     public void setKeyBinding(GameAction action, KeyCode keyCode) {
         keyBindings.put(action, new KeyBind(keyCode));
-        save(); // Sauvegarde automatique après modification
+        save();
     }
 
     public KeyBind getKeyBinding(GameAction action) {
@@ -107,26 +117,15 @@ public class Settings implements Serializable {
                 .orElse(null);
     }
 
-    public Map<GameAction, KeyBind> getAllKeyBindings() {
-        return new HashMap<>(keyBindings);
-    }
-
-    public boolean isKeyAlreadyBound(KeyCode keyCode) {
-        return keyBindings.values().stream()
-                .anyMatch(keyBind -> keyBind.getKeyCode().equals(keyCode));
-    }
-
-    private void getDefault() {
-        getDefaultKeyBinds();
-        difficulty = Difficulty.NORMAL;
-        volume = DEFAULT_VOLUME;
-        frequency = DEFAULT_FREQUENCY;
-    }
-
-    private void getDefaultKeyBinds() {
-        keyBindings.put(GameAction.MOVE_LEFT, new KeyBind(KeyCode.Q));
-        keyBindings.put(GameAction.MOVE_RIGHT, new KeyBind(KeyCode.D));
-        keyBindings.put(GameAction.SHOOT, new KeyBind(KeyCode.SPACE));
+    /**
+     * Check if a key is already bound
+     * Exclude the given action
+     * @return true if the key is already bound to another action
+     */
+    public boolean isKeyAlreadyBound(Settings.GameAction action, KeyCode keyCode) {
+        return keyBindings.entrySet().stream()
+                .filter(entry -> !entry.getKey().equals(action))
+                .anyMatch(entry -> entry.getValue().getKeyCode().equals(keyCode));
     }
 
     public enum GameAction {
@@ -139,6 +138,40 @@ public class Settings implements Serializable {
         EASY,
         NORMAL,
         HARD
+    }
+
+    public enum Resolution {
+        R2048x1080("2048x1080", 2048, 1080),
+        R1920x1080("1920x1080", 1920, 1080),
+        R1280x720("1280x720", 1280, 720),
+        R800x600("800x600", 800, 600);
+
+        private final String value;
+        private final double width;
+        private final double height;
+
+        Resolution(String value, double width, double height) {
+            this.value = value;
+            this.width = width;
+            this.height = height;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public static Resolution fromValue(String value) {
+            String str = 'R' + value;
+            return valueOf(str);
+        }
+
+        public double getWidth() {
+            return width;
+        }
+
+        public double getHeight() {
+            return height;
+        }
     }
 
     // Permet d'indiquer au process de serialisation comment instancier la classe
@@ -155,18 +188,9 @@ public class Settings implements Serializable {
         this.volume = volume;
     }
 
-    public double getFrequency() {
-        return frequency;
-    }
-
-    public void setFrequency(double frequency) {
-        this.frequency = frequency;
-        this.period = 1000.0 / frequency;
-    }
-
+    @JsonIgnore
     public double getPeriod() {
-        this.period = 1000.0 / frequency;
-        return period;
+        return 1000.0 / DEFAULT_FREQUENCY;
     }
 
     public Difficulty getDifficulty() {
@@ -175,6 +199,22 @@ public class Settings implements Serializable {
 
     public void setDifficulty(Difficulty difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public void setFullscreen(boolean fullscreen) {
+        this.fullscreen = fullscreen;
+    }
+
+    public boolean isFullScreen() {
+        return fullscreen;
+    }
+
+    public Resolution getResolution() {
+        return resolution;
+    }
+
+    public void setResolution(Resolution resolution) {
+        this.resolution = resolution;
     }
 
 }

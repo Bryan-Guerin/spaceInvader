@@ -14,7 +14,7 @@
     -fx-background-color: rgba(100, 100, 100, 0.8);
     -fx-border-color: white;
     -fx-border-width: 2;
-    -fx-text-fill: white;
+    -fx-text-fill: -text-color;
 }
 
 #canvas {
@@ -30,7 +30,7 @@
     -fx-pref-height: Infinity;
 }
 #healthPane .label, #progressPane .label {
-    -fx-text-fill: white;
+    -fx-text-fill: -text-color;
     -fx-font-size: 14px;
     -fx-padding: 10;
     -fx-font-family: 'Press Start 2P', cursive;

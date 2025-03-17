@@ -1,7 +1,7 @@
 
 /* Style of settings view */
 .title {
-    -fx-text-fill: white;
+    -fx-text-fill: -text-color;
     -fx-font-size: 50px;
 }
 
@@ -17,6 +17,6 @@
 }
 
 .settingLine .label {
-    -fx-text-fill: white;
+    -fx-text-fill: -text-color;
     -fx-font-size: 30px;
 }

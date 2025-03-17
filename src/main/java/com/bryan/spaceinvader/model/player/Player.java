@@ -57,7 +57,8 @@ public class Player {
         shootMediaPlayer.stop();
         shootMediaPlayer.setVolume(settings.getVolume() / 40); // This sound is too loud. Have to fix the source
         shootMediaPlayer.play();
-        return new Bullet(position, new Vector(0, -getAttributeValue(AttributeType.BULLET_SPEED)), getAttributeValue(AttributeType.BULLET_DAMAGE));
+        return new Bullet(this.position.copy().offset((double) Player.SIZE / 2 - Bullet.WIDTH / 2, 0),
+                new Vector(0, -getAttributeValue(AttributeType.BULLET_SPEED)), getAttributeValue(AttributeType.BULLET_DAMAGE));
     }
 
     public void moveLeft() {

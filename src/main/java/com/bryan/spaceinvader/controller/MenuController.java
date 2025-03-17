@@ -6,7 +6,7 @@ public class MenuController extends BasicController {
 
     @FXML
     public void onPlayButtonClick() {
-        this.changeCurrentScene(stage, "game-view.fxml", false);
+        this.changeCurrentScene(stage, "game-view.fxml");
     }
 
     @FXML
