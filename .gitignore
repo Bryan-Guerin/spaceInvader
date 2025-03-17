@@ -41,4 +41,6 @@ build/
 
 ### Custom ###
 *.log
-spaceinvader/
+spaceinvader/cfg/
+spaceinvader/logs/
+spaceinvader/app.lock
