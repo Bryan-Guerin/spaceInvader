@@ -18,7 +18,8 @@ public class InvaderShooter extends AbsInvader implements Shooter {
 
     @Override
     public Bullet shoot() {
-        return new Bullet(position, new Vector(0, BULLET_SPEED), damage);
+        return new Bullet(position.copy().offset((double) AbsInvader.SIZE / 2 - Bullet.WIDTH / 2, 0),
+                new Vector(0, BULLET_SPEED), damage);
     }
 
     @Override

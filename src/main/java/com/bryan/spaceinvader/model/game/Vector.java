@@ -11,4 +11,12 @@ public class Vector {
     public Vector add(Vector v) {
         return new Vector(dx + v.dx, dy + v.dy);
     }
+
+    @Override
+    public String toString() {
+        return "Vector{" +
+                "dx=" + dx +
+                ", dy=" + dy +
+                '}';
+    }
 }

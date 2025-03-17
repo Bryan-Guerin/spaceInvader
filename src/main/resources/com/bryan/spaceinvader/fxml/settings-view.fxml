@@ -37,6 +37,17 @@
         <Region HBox.hgrow="ALWAYS"/>
         <ComboBox fx:id="difficultyComboBox" promptText="Choisir la difficulté" onAction="#onChangeDifficulty"/>
     </HBox>
+    <HBox styleClass="settingLine">
+        <Label text="Résolution:"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <ComboBox fx:id="resolutionComboBox" promptText="Choisir la résolution" onAction="#onChangeResolution"/>
+    </HBox>
+<!--    TODO 8 : add fullscreen option -->
+<!--    <HBox styleClass="settingLine">-->
+<!--        <Label text="Plein écran:"/>-->
+<!--        <Region HBox.hgrow="ALWAYS"/>-->
+<!--        <CheckBox fx:id="fullscreenCheckBox" onAction="#onChangeFullscreen"/>-->
+<!--    </HBox>-->
 
     <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
         <Button onAction="#onSettingsReturnButtonClick" text="RETOUR"/>

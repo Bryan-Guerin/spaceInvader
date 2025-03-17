@@ -1,7 +1,8 @@
 package com.bryan.spaceinvader.model.game;
 
 public abstract class AbsInvader {
-    public static final int SIZE = 45; // It's a square
+    private static final double WIDTH_RATIO = 0.0234375; // Basically 45(default size) divide by 1920
+    public static int SIZE = 45; // It's a square
 
     public Position position;
     public double health;
@@ -51,5 +52,17 @@ public abstract class AbsInvader {
         if (o == null || getClass() != o.getClass()) return false;
         AbsInvader that = (AbsInvader) o;
         return health == that.health && type == that.type && position.equals(that.position);
+    }
+
+    public static void computeInvaderSize(double stageWidth) {
+        SIZE = (int) (stageWidth * WIDTH_RATIO);
+    }
+
+    @Override
+    public String toString() {
+        return "AbsInvader{" +
+                "position=" + position +
+                ", type=" + type +
+                '}';
     }
 }

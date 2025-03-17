@@ -6,7 +6,7 @@ public class GameConfig {
     private int numberOfRows;
     private int numberOfColumns;
     private int invaderSpeed;
-    private double invaderShotProbability;
+    private final double invaderShotProbability;
 
     public GameConfig(int numberOfRows, int numberOfColumns, int invaderSpeed, double invaderShotProbability) {
         this.numberOfRows = numberOfRows;
@@ -19,7 +19,7 @@ public class GameConfig {
         return switch (difficulty) {
             case EASY -> new GameConfig(8, 10, 2, 0.0005);
             case NORMAL -> new GameConfig(9, 12, 3, 0.001);
-            case HARD -> new GameConfig(10, 13, 3, 0.00015);
+            case HARD -> new GameConfig(10, 13, 3, 0.0015);
             default -> new GameConfig(5, 8, 1, 0);
         };
     }

@@ -13,7 +13,10 @@ import javafx.scene.paint.Color;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -33,26 +36,11 @@ public class Game {
     private boolean paused = false;
     private boolean debug = false;
 
-    private record Rect(int leftGap, int topGap, int xGap, int yGap) {
-        public HashMap<Direction, Integer> getDimensions(GameConfig gameConfig) {
-            HashMap<Direction, Integer> dimensions = new HashMap<>(2);
-            dimensions.put(Direction.HEIGHT, yGap * gameConfig.getNumberOfRows());
-            dimensions.put(Direction.WIDTH, xGap * gameConfig.getNumberOfColumns());
-            return dimensions;
-        }
-
-        public enum Direction {
-            HEIGHT, WIDTH
-        }
-    }
-
     private boolean isShooting, isMovingLeft, isMovingRight;
 
     // Const of the rect around invaders and define different properties like gap, spacing and size
     // No idea how to name it better
     private final Rect rect;
-
-//    TODO s'occuper de la difficulté pour créer la config de la partie et donc générer la vague
 
     private ArrayList<ArrayList<AbsInvader>> waves;
     private final ArrayList<InvaderShooter> shooters = new ArrayList<>();
@@ -64,11 +52,11 @@ public class Game {
         this.shopMenu = shopMenu;
         this.pauseMenu = pauseMenu;
         gameConfig = GameConfig.getGameConfig(settings.getDifficulty());
-        rect = new Rect((int) ((canvas.getWidth() - gameConfig.getNumberOfColumns() * 90 + 45) / 2), 50, 90, 60);
+        rect = new Rect(canvas, gameConfig);
 
         this.player = new Player((int) (canvas.getWidth() / 2), (int) (canvas.getHeight() - rect.yGap), healthBar);
         progress = new Progress(scoreBar);
-        generateWaves(0);
+        generateWaves(progress.getCurrentLevel());
         handlePlayerShooting();
     }
 
@@ -104,6 +92,8 @@ public class Game {
             killAllInvaders();
         if (event.getCode().equals(KeyCode.ESCAPE))
             handlePauseResume();
+        if (event.getCode().equals(KeyCode.M))
+            debug = !debug;
         if (logger.isTraceEnabled())
             logger.trace("Key {} pressed", event.getCode());
         event.consume();
@@ -214,7 +204,7 @@ public class Game {
             player.position.x = 0;
 
         if (player.position.x > canvas.getWidth() - Player.SIZE)
-            player.position.x = (int) (canvas.getWidth() - Player.SIZE);
+            player.position.x = canvas.getWidth() - Player.SIZE;
 
         // Bullets out of canvas
         playerBullets.removeIf(bullet -> bullet.position.y < 0);
@@ -229,7 +219,9 @@ public class Game {
                         if (k > playerBullets.size() - 1)
                             break;
                         if (nonNull(wave.get(j)) && wave.get(j).position.isInSquarePerimeter(playerBullets.get(k), AbsInvader.SIZE)) {
+                            logger.trace("Bullet {} hits invader {}", playerBullets.get(k), wave.get(j));
                             if (wave.get(j).takeDamage(playerBullets.get(k).damage)) { // If the invader is killed
+                                logger.debug("Invader {} killed by {}", wave.get(j), playerBullets.get(k));
                                 progress.recordKill(wave.get(j).getType().getScore());
                                 int finalI = j;
                                 if (wave.get(j).getType().isShooter())
@@ -285,7 +277,7 @@ public class Game {
     private void drawBullet(Image bulletImage, Bullet bullet) {
         canvas.getGraphicsContext2D().drawImage(
                 bulletImage,
-                bullet.position.x + 20, // Offset equivalent to Player.WIDTH / 2 - bulletImage.getWidth() / 2. Same for invaders
+                bullet.position.x,
                 bullet.position.y);
     }
 
@@ -312,10 +304,19 @@ public class Game {
                         invader.type.getTextureName(),
                         Image.class, ResourceType.IMAGE),
                 invader.position.x,
-                invader.position.y);
+                invader.position.y,
+                AbsInvader.SIZE, AbsInvader.SIZE);
     }
 
     private void renderPlayer() {
+        if (debug) {
+            canvas.getGraphicsContext2D().setFill(Color.RED);
+            canvas.getGraphicsContext2D()
+                    .fillRect(
+                            player.position.x,
+                            player.position.y,
+                            Player.SIZE, Player.SIZE);
+        }
         canvas.getGraphicsContext2D().drawImage(
                 ResourceManager.loadResource(
                         player.getVesselTexture(),
