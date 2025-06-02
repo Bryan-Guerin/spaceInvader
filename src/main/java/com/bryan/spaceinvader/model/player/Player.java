@@ -11,6 +11,7 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
 
 import java.util.HashMap;
 
@@ -58,7 +59,8 @@ public class Player {
         shootMediaPlayer.setVolume(settings.getVolume() / 40); // This sound is too loud. Have to fix the source
         shootMediaPlayer.play();
         return new Bullet(this.position.copy().offset((double) Player.SIZE / 2 - Bullet.WIDTH / 2, 0),
-                new Vector(0, -getAttributeValue(AttributeType.BULLET_SPEED)), getAttributeValue(AttributeType.BULLET_DAMAGE));
+                new Vector(0, -getAttributeValue(AttributeType.BULLET_SPEED)), getAttributeValue(AttributeType.BULLET_DAMAGE),
+                Color.RED);
     }
 
     public void moveLeft() {

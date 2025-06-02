@@ -1,5 +1,6 @@
 package com.bryan.spaceinvader.model.game;
 
+import com.bryan.spaceinvader.model.invader.AbsInvader;
 import javafx.scene.canvas.Canvas;
 
 // Const of the rect around invaders and define different properties like gap, spacing and size

@@ -1,17 +1,27 @@
-package com.bryan.spaceinvader.model.game;
+package com.bryan.spaceinvader.model.invader;
+
+import com.bryan.spaceinvader.model.game.Position;
+import com.bryan.spaceinvader.model.game.Vector;
+import com.bryan.spaceinvader.model.invader.state.InvaderState;
 
 public abstract class AbsInvader {
     private static final double WIDTH_RATIO = 0.0234375; // Basically 45(default size) divide by 1920
     public static int SIZE = 45; // It's a square
 
+    protected final InvaderState state;
     public Position position;
-    public double health;
     public InvaderType type;
+    private double health;
+    protected boolean isShielded;
+    protected double power;
 
     public AbsInvader(Position position, InvaderType type) {
+        this.state = type.getState();
         this.position = position;
         this.type = type;
         this.health = type.getMaxHealth();
+        this.isShielded = type.isDefaultShielded();
+        this.power = type.getBasePower();
     }
 
     /**
@@ -20,11 +30,15 @@ public abstract class AbsInvader {
      * @return true if the invader is dead
      */
     public boolean takeDamage(double damage) {
+        if (isShielded) {
+            isShielded = false;
+            return false;
+        }
         this.health -= damage;
         return this.health <= 0;
     }
 
-    public void heal(int amount) {
+    public void receiveHeal(int amount) {
         this.health += amount;
         if (this.health > this.type.getMaxHealth())
             this.health = this.type.getMaxHealth();
@@ -40,6 +54,10 @@ public abstract class AbsInvader {
 
     public InvaderType getType() {
         return type;
+    }
+
+    public boolean isShielded() {
+        return isShielded;
     }
 
     public void move(Vector vector) {
@@ -64,5 +82,29 @@ public abstract class AbsInvader {
                 "position=" + position +
                 ", type=" + type +
                 '}';
+    }
+
+    public void boost(double power) {
+        this.power += power;
+    }
+
+    public double getPower() {
+        return power;
+    }
+
+    public boolean isHealer() {
+        return this instanceof Healer;
+    }
+
+    public boolean isBooster() {
+        return this instanceof Booster;
+    }
+
+    public boolean isShooter() {
+        return this instanceof Shooter;
+    }
+
+    public boolean isNormal() {
+        return this instanceof Invader;
     }
 }

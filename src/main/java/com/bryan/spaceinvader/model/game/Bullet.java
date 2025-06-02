@@ -1,5 +1,7 @@
 package com.bryan.spaceinvader.model.game;
 
+import javafx.scene.paint.Paint;
+
 public class Bullet {
     public static final String PLAYER_BULLET_TEXTURE = "bullet_player.png";
     public static final String INVADER_BULLET_TEXTURE = "bullet_invader.png";
@@ -9,11 +11,13 @@ public class Bullet {
     public Position position;
     public Vector vector;
     public final double damage;
+    public Paint color;
 
-    public Bullet(Position position, Vector vector, double damage) {
+    public Bullet(Position position, Vector vector, double damage, Paint color) {
         this.damage = damage;
         this.position = position.copy();
         this.vector = vector;
+        this.color = color;
     }
 
     public void move() {

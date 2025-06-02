@@ -1,6 +1,11 @@
 package com.bryan.spaceinvader.model.game;
 
 import com.bryan.spaceinvader.model.Settings;
+import com.bryan.spaceinvader.model.game.level.generator.SimpleLevelGenerator;
+import com.bryan.spaceinvader.model.game.level.generator.RandomLevelGenerator;
+import com.bryan.spaceinvader.model.invader.AbsInvader;
+import com.bryan.spaceinvader.model.invader.InvaderShooter;
+import com.bryan.spaceinvader.model.invader.Shooter;
 import com.bryan.spaceinvader.model.player.Player;
 import com.bryan.spaceinvader.model.ressource.manager.ResourceManager;
 import com.bryan.spaceinvader.model.ressource.manager.ResourceType;
@@ -18,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 public class Game {
@@ -124,40 +128,10 @@ public class Game {
     }
 
     private void generateWaves(int level) {
-        this.waves = new ArrayList<>();
-        int totalInvaders = 0;
-
-        for (int i = 0; i < gameConfig.getNumberOfRows(); i++) {
-            ArrayList<AbsInvader> line = new ArrayList<>();
-            for (int j = 0; j < gameConfig.getNumberOfColumns(); j++) {
-                InvaderType type = generateInvaderType(i, j, level);
-                if (isNull(type))
-                    continue;
-                if (type.isShooter()) {
-                    InvaderShooter invader = new InvaderShooter(new Position(rect.leftGap + rect.xGap * j, rect.topGap + rect.yGap * i), type);
-                    shooters.add(invader);
-                    line.add(invader);
-                } else {
-                    line.add(new Invader(new Position(rect.leftGap + rect.xGap * j, rect.topGap + rect.yGap * i), type));
-                }
-                totalInvaders++;
-            }
-            waves.add(line);
-        }
-        progress.setTotalInvaders(totalInvaders);
-    }
-
-    private InvaderType generateInvaderType(int row, int column, int level) {
-        // TODO compléter pour faire mieux avec tous les types en fonction des probas généré dans le gameConfig
-        // Certainement placer ça dans une autre classe pour mieux l'organiser et permettre de le compléter en appelant d'autres classes
-        if (row <= 1)
-            return InvaderType.SHOOTER;
-        double prob = Math.random();
-        if (prob <= 0.35)
-            return InvaderType.SOLDIER;
-        if (prob <= 0.5)
-            return InvaderType.SHOOTER;
-        return null;
+        SimpleLevelGenerator levelGenerator = new SimpleLevelGenerator(level, gameConfig, rect);
+        this.waves = levelGenerator.generate();
+        progress.setTotalInvaders(levelGenerator.getTotalInvaders());
+        this.shooters.addAll(levelGenerator.getShooters());
     }
 
     private void handleInputs() {
@@ -176,7 +150,7 @@ public class Game {
     private void invaderShoot() {
         shooters.forEach(invaderShooter -> {
             if (Math.random() < gameConfig.getInvaderShotProbability())
-                invaderBullets.add(invaderShooter.shoot());
+                invaderBullets.addAll(invaderShooter.shoot());
         });
     }
 
@@ -193,9 +167,6 @@ public class Game {
             logger.info("Level {} completed. Starting next level.", progress.getCurrentLevel());
             endCurrentLevel();
         }
-
-        if (progress.isLevelCompleted())
-            endCurrentLevel();
     }
 
     private void computeCollision() {
@@ -219,15 +190,17 @@ public class Game {
                         if (k > playerBullets.size() - 1)
                             break;
                         if (nonNull(wave.get(j)) && wave.get(j).position.isInSquarePerimeter(playerBullets.get(k), AbsInvader.SIZE)) {
-                            logger.trace("Bullet {} hits invader {}", playerBullets.get(k), wave.get(j));
-                            if (wave.get(j).takeDamage(playerBullets.get(k).damage)) { // If the invader is killed
-                                logger.debug("Invader {} killed by {}", wave.get(j), playerBullets.get(k));
-                                progress.recordKill(wave.get(j).getType().getScore());
+                            AbsInvader invader = wave.get(j);
+                            if (invader.takeDamage(playerBullets.get(k).damage)) { // If the invader is killed
+                                if (logger.isTraceEnabled())
+                                    logger.trace("Invader {} killed by {}", invader, playerBullets.get(k));
+                                progress.recordKill(invader.getType().getScore());
                                 int finalI = j;
-                                if (wave.get(j).getType().isShooter())
+                                if (invader instanceof Shooter)
                                     shooters.removeIf(shooter -> shooter.equals(wave.get(finalI)));
                                 wave.set(j, null);
-                            }
+                            } else if (logger.isTraceEnabled())
+                                logger.trace("Bullet {} hits invader {}", playerBullets.get(k), invader);
                             playerBullets.remove(k);
                         }
                     }
@@ -237,12 +210,13 @@ public class Game {
         }
 
         // Invaders bullets hits player
-        for (int i = 0; i < invaderBullets.size(); i++) {
-            if (player.position.isInSquarePerimeter(invaderBullets.get(i), Player.SIZE)) {
-                player.takeDamage(invaderBullets.get(i).damage);
-                invaderBullets.set(i, null);
+        if (!debug)
+            for (int i = 0; i < invaderBullets.size(); i++) {
+                if (player.position.isInSquarePerimeter(invaderBullets.get(i), Player.SIZE)) {
+                    player.takeDamage(invaderBullets.get(i).damage);
+                    invaderBullets.set(i, null);
+                }
             }
-        }
 
         invaderBullets.removeIf(Objects::isNull);
         playerBullets.removeIf(Objects::isNull);
@@ -257,28 +231,23 @@ public class Game {
     }
 
     private void renderBullets() {
-        Image bulletImage = ResourceManager.loadResource(
-                Bullet.PLAYER_BULLET_TEXTURE,
-                Image.class, ResourceType.IMAGE);
-
         for (Bullet bullet : playerBullets) {
-            drawBullet(bulletImage, bullet);
+            canvas.getGraphicsContext2D().setFill(bullet.color);
+            canvas.getGraphicsContext2D()
+                    .fillRect(
+                            bullet.position.x,
+                            bullet.position.y,
+                            Bullet.WIDTH, Bullet.HEIGHT);
         }
-
-        bulletImage = ResourceManager.loadResource(
-                Bullet.INVADER_BULLET_TEXTURE,
-                Image.class, ResourceType.IMAGE);
 
         for (Bullet bullet : invaderBullets) {
-            drawBullet(bulletImage, bullet);
+            canvas.getGraphicsContext2D().setFill(bullet.color);
+            canvas.getGraphicsContext2D()
+                    .fillRect(
+                            bullet.position.x,
+                            bullet.position.y,
+                            Bullet.WIDTH, Bullet.HEIGHT);
         }
-    }
-
-    private void drawBullet(Image bulletImage, Bullet bullet) {
-        canvas.getGraphicsContext2D().drawImage(
-                bulletImage,
-                bullet.position.x,
-                bullet.position.y);
     }
 
     private void renderInvaders() {
@@ -292,7 +261,7 @@ public class Game {
 
     private void drawInvader(AbsInvader invader) {
         if (debug) {
-            canvas.getGraphicsContext2D().setFill(Color.RED);
+            canvas.getGraphicsContext2D().setFill(Color.color(1, 0, 0, 0.2));
             canvas.getGraphicsContext2D()
                     .fillRect(
                             invader.position.x,

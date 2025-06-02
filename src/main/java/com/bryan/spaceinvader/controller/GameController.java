@@ -1,7 +1,7 @@
 package com.bryan.spaceinvader.controller;
 
 import com.bryan.spaceinvader.model.Settings;
-import com.bryan.spaceinvader.model.game.AbsInvader;
+import com.bryan.spaceinvader.model.invader.AbsInvader;
 import com.bryan.spaceinvader.model.game.Game;
 import com.bryan.spaceinvader.model.shop.ShopItem;
 import com.bryan.spaceinvader.model.shop.ShopItemNode;

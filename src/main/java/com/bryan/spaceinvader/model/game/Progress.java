@@ -62,7 +62,7 @@ public class Progress {
     }
 
     public void reset() {
-        setCurrentLevel(0);
+        setCurrentLevel(1);
         setScore(0);
         setLives(3);
         setTotalInvaders(0);
